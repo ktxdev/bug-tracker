@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RestController
-@RequestMapping("api/v1/projects")
 @RequiredArgsConstructor
+@RequestMapping("api/v1/projects")
 public class ProjectRestController {
 
     private final ProjectService projectService;
@@ -75,9 +75,9 @@ public class ProjectRestController {
         return ResponseEntity.ok(projectService.getAllProjects(pageable));
     }
 
-    @PutMapping("{projectId}")
+    @DeleteMapping("{projectId}")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.UserRole).ADMIN)")
-    public ResponseEntity<Project> deleteProject(
+    public ResponseEntity<?> deleteProject(
             @PathVariable long projectId
     ) {
         projectService.deleteProject(projectId);

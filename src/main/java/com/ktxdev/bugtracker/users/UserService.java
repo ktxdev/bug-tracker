@@ -8,6 +8,8 @@ import java.security.Principal;
 public interface UserService {
     User findUserById(long id);
 
+    User findByEmail(String email);
+
     User create(UserDto command);
 
     User register(UserDto command);

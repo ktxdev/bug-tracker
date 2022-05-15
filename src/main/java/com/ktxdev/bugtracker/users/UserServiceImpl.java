@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
     public User create(UserDto command) {
         if (isNull(command.getRole()))
             throw new InvalidRequestException("Role should be provided");
@@ -94,7 +93,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d not found", id)));
     }
 
-    private User findByEmail(String email) {
+    @Override
+    public User findByEmail(String email) {
         return userDao.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
     }
