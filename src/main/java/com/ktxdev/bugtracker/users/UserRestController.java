@@ -30,7 +30,7 @@ public class UserRestController {
                 .body(userService.create(userDto));
     }
 
-    @PostMapping("opn/v1/users")
+    @PostMapping("opn/v1/users/sign-up")
     public ResponseEntity<User> register(
             @RequestBody UserDto userDto,
             HttpServletRequest request
@@ -42,9 +42,10 @@ public class UserRestController {
                 .body(userService.register(userDto));
     }
 
-    @PutMapping("v1/users")
+    @PutMapping("v1/users/{userId}")
     public ResponseEntity<User> update(
-            @RequestBody UserDto userDto
+            @RequestBody UserDto userDto,
+            @PathVariable long userId
     ) {
         return ResponseEntity.ok(userService.update(userDto));
     }
@@ -59,7 +60,7 @@ public class UserRestController {
     @GetMapping("v1/users")
     public ResponseEntity<Page<User>> getAllUser(
             @PageableDefault(sort = "lastName") Pageable pageable,
-            @RequestParam String q
+            @RequestParam(required = false) String q
     ) {
         return ResponseEntity.ok(userService.getAllUser(pageable, q));
     }

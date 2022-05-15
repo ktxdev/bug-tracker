@@ -54,11 +54,10 @@ public class UserServiceImpl implements UserService {
         if (nonNull(updateDto.getRole()))
             user.setRole(updateDto.getRole());
 
-        if (nonNull(updateDto.getPassword()) && nonNull(updateDto.getConfirmPassword())) {
-            if (updateDto.getPassword().equals(updateDto.getConfirmPassword()))
+        if (nonNull(updateDto.getPassword()) && updateDto.getPassword().equals(updateDto.getConfirmPassword())) {
                 user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
-            else
-                throw new InvalidRequestException("Passwords do not match");
+        } else {
+            throw new InvalidRequestException("Passwords do not match");
         }
 
         return userDao.save(user);
