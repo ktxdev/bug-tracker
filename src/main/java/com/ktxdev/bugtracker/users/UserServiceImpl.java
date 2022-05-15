@@ -42,8 +42,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(UserDto updateDto) {
-        val user = userDao.findById(updateDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d not found", updateDto.getId())));
+        val user = findUserById(updateDto.getId());
 
         if (nonNull(updateDto.getFirstName()))
             user.setFirstName(updateDto.getFirstName());
@@ -87,6 +86,12 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(createDto.getPassword()))
                 .role(createDto.getRole())
                 .build();
+    }
+
+    @Override
+    public User findUserById(long id) {
+        return userDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d not found", id)));
     }
 
     private User findByEmail(String email) {

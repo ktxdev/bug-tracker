@@ -47,6 +47,7 @@ public class UserRestController {
             @RequestBody UserDto userDto,
             @PathVariable long userId
     ) {
+        userDto.setId(userId);
         return ResponseEntity.ok(userService.update(userDto));
     }
 
