@@ -5,6 +5,7 @@ import com.ktxdev.bugtracker.exception.ResourceNotFoundException;
 import com.ktxdev.bugtracker.users.dao.UserDao;
 import com.ktxdev.bugtracker.users.dto.UserDto;
 import com.ktxdev.bugtracker.users.model.User;
+import com.ktxdev.bugtracker.users.model.UserRole;
 import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -18,6 +19,7 @@ import java.security.Principal;
 import static com.ktxdev.bugtracker.users.model.UserRole.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.springframework.util.StringUtils.hasText;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDto command) {
-        if (isNull(command.getRole()))
+        if (!hasText(command.getRole()))
             throw new InvalidRequestException("Role should be provided");
         val user = validateAndBuild(command);
         return userDao.save(user);
@@ -37,7 +39,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(UserDto command) {
-        command.setRole(USER);
         val user = validateAndBuild(command);
         return userDao.save(user);
     }
@@ -52,8 +53,8 @@ public class UserServiceImpl implements UserService {
         if (nonNull(updateDto.getLastName()))
             user.setLastName(updateDto.getLastName());
 
-        if (nonNull(updateDto.getRole()))
-            user.setRole(updateDto.getRole());
+//        if (nonNull(updateDto.getRole()))
+//            user.setRole(updateDto.getRole());
 
         if (nonNull(updateDto.getPassword()) && updateDto.getPassword().equals(updateDto.getConfirmPassword())) {
                 user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
@@ -81,12 +82,16 @@ public class UserServiceImpl implements UserService {
         if (!createDto.getPassword().equals(createDto.getConfirmPassword()))
             throw new InvalidRequestException("Passwords do not match");
 
+        UserRole role = USER;
+        if (hasText(createDto.getRole()))
+            role = UserRole.valueOf(createDto.getRole());
+
         return User.builder()
                 .firstName(createDto.getFirstName())
                 .lastName(createDto.getLastName())
                 .email(createDto.getEmail())
                 .password(passwordEncoder.encode(createDto.getPassword()))
-                .role(createDto.getRole())
+                .role(role)
                 .build();
     }
 

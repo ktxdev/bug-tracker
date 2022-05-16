@@ -19,5 +19,5 @@ public class UserDto {
 
     private String confirmPassword;
 
-    private UserRole role;
+    private String role;
 }

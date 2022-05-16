@@ -2,18 +2,21 @@ package com.ktxdev.bugtracker.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class UserIntegrationTests {
-
+    @Value("${server.port}")
+    private int PORT;
     @Autowired
     private MockMvc mockMvc;
 
@@ -29,7 +32,7 @@ class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                post("api/v1/users")
+                post("http://localhost:" + PORT + "/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());
@@ -60,11 +63,10 @@ class UserIntegrationTests {
                 "\"email\":\"tinashe@gmail.com\", " +
                 "\"password\":\"Pass123\", " +
                 "\"confirmPassword\":\"Password\", " +
-                "\"role\":\"ADMIN\"" +
                 "}";
 
         mockMvc.perform(
-                post("api/opn/v1/users/sign-up")
+                post("http://localhost:" + PORT + "/api/opn/v1/users/sign-up")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());

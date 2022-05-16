@@ -17,6 +17,7 @@ import java.net.URI;
 import java.security.Principal;
 
 @RestController
+@RequestMapping("api")
 @RequiredArgsConstructor
 public class UserRestController {
 
