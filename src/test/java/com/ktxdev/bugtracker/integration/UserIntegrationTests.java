@@ -1,25 +1,21 @@
 package com.ktxdev.bugtracker.integration;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class UserIntegrationTests {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class UserIntegrationTests {
     @Value("${server.port}")
     private int PORT;
     @Autowired
@@ -33,6 +29,7 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(1)
     @WithMockUser
     public void whenCreateUser_thenReturnCreated() throws Exception {
         String json = "{" +
@@ -53,6 +50,7 @@ class UserIntegrationTests {
 
     @Test
     @WithMockUser
+    @Order(2)
     public void whenCreateUserWithoutRole_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -70,6 +68,7 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(3)
     public void whenRegister_thenReturnCreated() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Tinashe\", " +
@@ -88,6 +87,7 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(4)
     public void whenRegisterWithExistingEmail_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -105,6 +105,7 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(5)
     public void whenRegisterWithNonMatchingPassword_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -122,12 +123,14 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(6)
+    @WithMockUser
     public void whenUpdate_thenShouldBeOk() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
                 "\"lastName\":\"Huvaya\", " +
                 "\"password\":\"Password\", " +
-                "\"confirmPassword\":\"Password\", " +
+                "\"confirmPassword\":\"Password\" " +
                 "}";
 
         mockMvc.perform(
@@ -138,6 +141,7 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(7)
     @WithMockUser
     public void whenUpdateWithNonMatchingPasswords_thenReturnBadRequest() throws Exception {
         String json = "{" +
@@ -155,7 +159,8 @@ class UserIntegrationTests {
     }
 
     @Test
-    @WithMockUser
+    @Order(8)
+    @WithMockUser(username = "sean@gmail.com")
     public void whenGetProfile_thenReturnOk() throws Exception {
 
         mockMvc.perform(
@@ -164,6 +169,7 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(9)
     @WithMockUser
     public void whenGetAllUsers_thenReturnOk() throws Exception {
         mockMvc.perform(
