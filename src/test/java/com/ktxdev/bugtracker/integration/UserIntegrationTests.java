@@ -1,14 +1,19 @@
 package com.ktxdev.bugtracker.integration;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,7 +25,15 @@ class UserIntegrationTests {
     @Autowired
     private MockMvc mockMvc;
 
+    private String baseUrl;
+
+    @BeforeEach
+    public void setUp() {
+        baseUrl = String.format("http://localhost:%d/api/",  PORT);
+    }
+
     @Test
+    @WithMockUser
     public void whenCreateUser_thenReturnCreated() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -32,13 +45,14 @@ class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                post("http://localhost:" + PORT + "/api/v1/users")
+                post(String.format("%s/v1/users", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());
     }
 
     @Test
+    @WithMockUser
     public void whenCreateUserWithoutRole_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -49,7 +63,7 @@ class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                post("api/v1/users")
+                post(String.format("%s/v1/users", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isBadRequest());
@@ -61,12 +75,13 @@ class UserIntegrationTests {
                 "\"firstName\":\"Tinashe\", " +
                 "\"lastName\":\"Chisenga\", " +
                 "\"email\":\"tinashe@gmail.com\", " +
-                "\"password\":\"Pass123\", " +
-                "\"confirmPassword\":\"Password\", " +
+                "\"password\":\"Password\", " +
+                "\"confirmPassword\":\"Password\" " +
                 "}";
 
+
         mockMvc.perform(
-                post("http://localhost:" + PORT + "/api/opn/v1/users/sign-up")
+                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());
@@ -79,11 +94,11 @@ class UserIntegrationTests {
                 "\"lastName\":\"Huvaya\", " +
                 "\"email\":\"sean@gmail.com\", " +
                 "\"password\":\"Password\", " +
-                "\"confirmPassword\":\"Password\", " +
+                "\"confirmPassword\":\"Password\" " +
                 "}";
 
         mockMvc.perform(
-                post("api/opn/v1/users/sign-up")
+                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isBadRequest());
@@ -96,11 +111,11 @@ class UserIntegrationTests {
                 "\"lastName\":\"Huvaya\", " +
                 "\"email\":\"sean@gmail.com\", " +
                 "\"password\":\"Pass123\", " +
-                "\"confirmPassword\":\"Password\", " +
+                "\"confirmPassword\":\"Password\" " +
                 "}";
 
         mockMvc.perform(
-                post("api/opn/v1/users/sign-up")
+                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isBadRequest());
@@ -116,13 +131,14 @@ class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                put("api/v1/users/1" )
+                put(String.format("%s/v1/users/1", baseUrl) )
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isOk());
     }
 
     @Test
+    @WithMockUser
     public void whenUpdateWithNonMatchingPasswords_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -132,33 +148,26 @@ class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                put("api/v1/users/1" )
+                put(String.format("%s/v1/users/1", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     public void whenGetProfile_thenReturnOk() throws Exception {
-//        String res = "{" +
-//                "\"id\": 1" +
-//                "\"firstName\":\"Sean\", " +
-//                "\"lastName\":\"Huvaya\", " +
-//                "\"email\":\"sean@gmail.com\", " +
-//                "\"password\":\"Password\", " +
-//                "\"confirmPassword\":\"Password\", " +
-//                "\"role\":\"ADMIN\"" +
-//                "}";
 
         mockMvc.perform(
-                get("api/v1/users/profile" )
+                get(String.format("%s/v1/users/profile", baseUrl))
         ).andExpect(status().isOk());
     }
 
     @Test
+    @WithMockUser
     public void whenGetAllUsers_thenReturnOk() throws Exception {
         mockMvc.perform(
-                get("api/v1/users" )
+                get(String.format("%s/v1/users", baseUrl) )
         ).andExpect(status().isOk());
     }
 }

@@ -8,6 +8,7 @@ import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.model.UserRole;
 import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ import static com.ktxdev.bugtracker.users.model.UserRole.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.StringUtils.hasText;
-
+@Slf4j(topic = "Users Service")
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -76,16 +77,21 @@ public class UserServiceImpl implements UserService {
     }
 
     private User validateAndBuild(UserDto createDto) {
-        if (userDao.existsByEmail(createDto.getEmail()))
+        if (userDao.existsByEmail(createDto.getEmail())) {
+            log.debug("### Email already in use: {}", createDto.getEmail());
             throw new InvalidRequestException("Email already in use");
+        }
 
-        if (!createDto.getPassword().equals(createDto.getConfirmPassword()))
+        if (!createDto.getPassword().equals(createDto.getConfirmPassword())) {
+            log.debug("### Passwords do not match: {}", createDto);
             throw new InvalidRequestException("Passwords do not match");
+        }
 
         UserRole role = USER;
         if (hasText(createDto.getRole()))
             role = UserRole.valueOf(createDto.getRole());
 
+        log.debug("### Creating user with role: " + role);
         return User.builder()
                 .firstName(createDto.getFirstName())
                 .lastName(createDto.getLastName())

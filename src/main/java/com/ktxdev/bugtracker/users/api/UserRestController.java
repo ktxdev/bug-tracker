@@ -4,6 +4,7 @@ import com.ktxdev.bugtracker.users.dto.UserDto;
 import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,12 +20,13 @@ import java.security.Principal;
 @RestController
 @RequestMapping("api")
 @RequiredArgsConstructor
+@Slf4j(topic = "User Rest Controller")
 public class UserRestController {
 
     private final UserService userService;
 
     @PostMapping("v1/users")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN.name())")
     public ResponseEntity<User> create(
             @RequestBody UserDto userDto,
             HttpServletRequest request
