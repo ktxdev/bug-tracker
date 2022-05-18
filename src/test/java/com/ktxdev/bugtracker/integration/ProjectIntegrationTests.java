@@ -175,8 +175,5 @@ public class ProjectIntegrationTests {
     public void whenDeleteProject_thenShouldBeNoContent() throws Exception {
         mockMvc.perform(delete(String.format("%s/%d", baseUrl, 2)))
                 .andExpect(status().isNoContent());
-
-        mockMvc.perform(delete(String.format("%s/%d", baseUrl, 1)))
-                .andExpect(status().isNoContent());
     }
 }
