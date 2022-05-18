@@ -11,26 +11,26 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserIntegrationTests {
     @Value("${server.port}")
-    private int PORT;
+    private static int PORT;
+
+    private static String baseUrl;
+
     @Autowired
     private MockMvc mockMvc;
 
-    private String baseUrl;
-
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         baseUrl = String.format("http://localhost:%d/api/",  PORT);
     }
 
     @Test
     @Order(1)
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     public void whenCreateUser_thenReturnCreated() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -49,15 +49,15 @@ public class UserIntegrationTests {
     }
 
     @Test
-    @WithMockUser
     @Order(2)
+    @WithMockUser(roles = "ADMIN")
     public void whenCreateUserWithoutRole_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
                 "\"lastName\":\"Huvaya\", " +
                 "\"email\":\"sean@gmail.com\", " +
                 "\"password\":\"Password\", " +
-                "\"confirmPassword\":\"Password\", " +
+                "\"confirmPassword\":\"Password\" " +
                 "}";
 
         mockMvc.perform(

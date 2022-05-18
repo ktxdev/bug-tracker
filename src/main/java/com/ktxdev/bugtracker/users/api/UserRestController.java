@@ -26,7 +26,7 @@ public class UserRestController {
     private final UserService userService;
 
     @PostMapping("v1/users")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN.name())")
+    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<User> create(
             @RequestBody UserDto userDto,
             HttpServletRequest request

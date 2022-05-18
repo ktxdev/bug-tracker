@@ -13,26 +13,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Order(2)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProjectIntegrationTests {
     @Value("${server.port}")
-    private int PORT;
+    private static int PORT;
+
+    private static String baseUrl;
+
     @Autowired
     private MockMvc mockMvc;
 
-    private String baseUrl;
-
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         baseUrl = String.format("http://localhost:%d/api/v1/projects",  PORT);
     }
 
     @Test
     @Order(1)
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("When create project should create")
     public void whenCreateProject_thenShouldCreate() throws Exception {
         String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\"}";
@@ -46,7 +46,21 @@ public class ProjectIntegrationTests {
 
     @Test
     @Order(2)
-    @WithMockUser
+    @WithMockUser(roles = "USER")
+    @DisplayName("When create project should create")
+    public void whenCreateProject_thenShouldBeForbidden() throws Exception {
+        String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\"}";
+
+        mockMvc.perform(
+                post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(json)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(3)
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("When create project with existing name should return bad request")
     public void whenCreateProjectWithExistingName_thenShouldReturnBadRequest() throws Exception {
         String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\"}";
@@ -59,8 +73,8 @@ public class ProjectIntegrationTests {
     }
 
     @Test
-    @Order(3)
-    @WithMockUser
+    @Order(4)
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("When update project then should return update")
     public void whenUpdateProject_thenShouldReturnOk() throws Exception {
         String json = "{\"name\":\"Project Test\", \"description\":\"Test project description\"}";
