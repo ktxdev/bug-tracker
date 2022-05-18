@@ -8,11 +8,13 @@ import com.ktxdev.bugtracker.projects.model.Project;
 import com.ktxdev.bugtracker.projects.service.ProjectService;
 import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -37,10 +39,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project updateProject(ProjectDto projectDto) {
-        val project = getProjectById(projectDto.getId());
 
-        if (projectDao.existsByNameAndIdIsNot(project.getName(), projectDto.getId()))
+        if (projectDao.existsByNameAndIdIsNot(projectDto.getName(), projectDto.getId()))
             throw new InvalidRequestException("Project with same name already exists");
+
+        val project = getProjectById(projectDto.getId());
 
         project.setName(projectDto.getName());
         project.setDescription(projectDto.getDescription());
@@ -63,6 +66,10 @@ public class ProjectServiceImpl implements ProjectService {
     public Project addMember(long projectId, long userId) {
         val project = getProjectById(projectId);
         val user = userService.findUserById(userId);
+
+        if (project.getMembers().contains(user))
+            throw new InvalidRequestException("User is already a member of the project");
+
         project.addMember(user);
         return projectDao.save(project);
     }

@@ -46,6 +46,20 @@ public class ProjectRestController {
         return ResponseEntity.ok(projectService.updateProject(projectDto));
     }
 
+    @GetMapping("{projectId}")
+    public ResponseEntity<Project> getProject(
+            @PathVariable long projectId
+    ) {
+        return ResponseEntity.ok(projectService.getProjectById(projectId));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Project>> getAllProjects(
+            @PageableDefault Pageable pageable
+    ) {
+        return ResponseEntity.ok(projectService.getAllProjects(pageable));
+    }
+
     @PutMapping("{projectId}/members/add-member")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> addMember(
@@ -62,20 +76,6 @@ public class ProjectRestController {
             @RequestParam long memberId
     ) {
         return ResponseEntity.ok(projectService.removeMember(projectId, memberId));
-    }
-
-    @GetMapping("{projectId}")
-    public ResponseEntity<Project> getProject(
-            @PathVariable long projectId
-    ) {
-        return ResponseEntity.ok(projectService.getProjectById(projectId));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<Project>> getAllProjects(
-            @PageableDefault Pageable pageable
-    ) {
-        return ResponseEntity.ok(projectService.getAllProjects(pageable));
     }
 
     @DeleteMapping("{projectId}")
