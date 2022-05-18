@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Random;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -146,6 +144,10 @@ public class ProjectIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.members", hasSize(2)));
 
+        mockMvc.perform(put(String.format("%s/%d/members/add-member?memberId=%d", baseUrl, 1, 3)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.members", hasSize(3)));
+
     }
 
     @Test
@@ -162,11 +164,7 @@ public class ProjectIntegrationTests {
     public void whenRemoveMember_thenShouldBeOk() throws Exception {
         mockMvc.perform(put(String.format("%s/%d/members/remove-member?memberId=%d", baseUrl, 1, 2)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.members", hasSize(1)));
-
-        mockMvc.perform(put(String.format("%s/%d/members/remove-member?memberId=%d", baseUrl, 1, 1)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.members", hasSize(0)));
+                .andExpect(jsonPath("$.members", hasSize(2)));
     }
 
     @Test

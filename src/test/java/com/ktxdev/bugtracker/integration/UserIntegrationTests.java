@@ -87,6 +87,20 @@ public class UserIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());
+
+        json = "{" +
+                "\"firstName\":\"Prince\", " +
+                "\"lastName\":\"Huvaya\", " +
+                "\"email\":\"prince@gmail.com\", " +
+                "\"password\":\"Pass123\", " +
+                "\"confirmPassword\":\"Pass123\" " +
+                "}";
+
+        mockMvc.perform(
+                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(json)
+        ).andExpect(status().isCreated());
     }
 
     @Test
