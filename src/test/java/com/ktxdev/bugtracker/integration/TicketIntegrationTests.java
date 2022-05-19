@@ -106,7 +106,7 @@ public class TicketIntegrationTests {
         mockMvc.perform(
                 get(baseUrl))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content", hasSize(2)));
+            .andExpect(jsonPath("$.content", hasSize(2))).andReturn();
     }
 
     @Test
@@ -117,5 +117,30 @@ public class TicketIntegrationTests {
                         get(baseUrl))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(0)));
+    }
+
+    @Test
+    @Order(6)
+    @WithMockUser
+    public void whenAddAssignee_thenShouldBeOk() throws Exception {
+        mockMvc.perform(
+                        put(String.format("%s/%d/assignees/add-assignee?assigneeId=%d",baseUrl, 1, 1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.assignees", hasSize(1)));
+
+        mockMvc.perform(
+                        put(String.format("%s/%d/assignees/add-assignee?assigneeId=%d",baseUrl, 1, 3)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.assignees", hasSize(2)));
+    }
+
+    @Test
+    @Order(7)
+    @WithMockUser
+    public void whenAddAssigneeWhoseNotMemberToProject_thenShouldBeBadRequest() throws Exception {
+        mockMvc.perform(
+                        put(String.format("%s/%d/assignees/add-assignee?assigneeId=%d",baseUrl, 1, 2)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
     }
 }
