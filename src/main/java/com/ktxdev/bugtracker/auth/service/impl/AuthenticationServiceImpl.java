@@ -8,6 +8,7 @@ import com.ktxdev.bugtracker.auth.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+    @Value("system.jwt.secret")
+    private String secret;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
@@ -36,7 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         val user = (User) userDetailsService.loadUserByUsername(requestDto.getEmail());
 
-        Algorithm algorithm = Algorithm.HMAC256("SECRET".getBytes(StandardCharsets.UTF_8));
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes(StandardCharsets.UTF_8));
 
         val accessToken = JWT.create()
                 .withSubject(user.getUsername())

@@ -11,3 +11,9 @@ spring:
 server:
   port: 9803
 
+system:
+  defaults:
+    email: admin@ktxdev.com
+    password: P@ssw0rd
+  jwt:
+    secret: '$M#h5UjccJFS^J_m'

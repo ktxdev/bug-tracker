@@ -8,3 +8,11 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: create-drop
+    show-sql: true
+
+system:
+  defaults:
+    email: admin@ktxdev.com
+    password: P@ssw0rd
+  jwt:
+    secret: '$M#h5UjccJFS^J_m'
