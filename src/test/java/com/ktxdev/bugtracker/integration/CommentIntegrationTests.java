@@ -99,4 +99,13 @@ public class CommentIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)));
     }
+
+    @Test
+    @Order(5)
+    @WithMockUser
+    public void whenDeleteComment_thenShouldBeNoContent() throws Exception {
+        mockMvc.perform(
+                        delete(baseUrl + "/" + 2))
+                .andExpect(status().isNoContent());
+    }
 }
