@@ -3,6 +3,8 @@ package com.ktxdev.bugtracker.tickets.api;
 import com.ktxdev.bugtracker.tickets.dto.TicketDto;
 import com.ktxdev.bugtracker.tickets.model.Ticket;
 import com.ktxdev.bugtracker.tickets.service.TicketService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import java.net.URI;
 import java.security.Principal;
 
 @RestController
+@Api(tags = "Tickets")
 @RequiredArgsConstructor
 @RequestMapping("api/v1/tickets")
 public class TicketRestController {
@@ -23,6 +26,7 @@ public class TicketRestController {
     private final TicketService ticketService;
 
     @PostMapping
+    @ApiOperation("Create ticke")
     public ResponseEntity<Ticket> createTicket(
             @RequestBody TicketDto ticketDto,
             HttpServletRequest request
@@ -36,6 +40,7 @@ public class TicketRestController {
     }
 
     @PutMapping("{ticketId}")
+    @ApiOperation("Update ticket")
     public ResponseEntity<Ticket> updateTicket(
             @RequestBody TicketDto ticketDto,
             @PathVariable long ticketId
@@ -45,6 +50,7 @@ public class TicketRestController {
     }
 
     @GetMapping("{ticketId}")
+    @ApiOperation("Get ticket by id")
     public ResponseEntity<Ticket> getTicketById(
             @PathVariable long ticketId
     ) {
@@ -52,6 +58,7 @@ public class TicketRestController {
     }
 
     @GetMapping
+    @ApiOperation("Get all tickets")
     public ResponseEntity<Page<Ticket>> getAllTickets(
             @PageableDefault Pageable pageable,
             Principal principal
@@ -60,6 +67,7 @@ public class TicketRestController {
     }
 
     @DeleteMapping("{ticketId}")
+    @ApiOperation("Delete ticket")
     public ResponseEntity<?> deleteTicket(
             @PathVariable long ticketId
     ) {
@@ -67,6 +75,7 @@ public class TicketRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @ApiOperation("Add assignee to ticket")
     @PutMapping("{ticketId}/assignees/add-assignee")
     public ResponseEntity<Ticket> addAssignee(
             @PathVariable long ticketId,
@@ -75,6 +84,7 @@ public class TicketRestController {
         return ResponseEntity.ok(ticketService.addAssignee(ticketId, assigneeId));
     }
 
+    @ApiOperation("Remove assignee from ticket")
     @PutMapping("{ticketId}/assignees/remove-assignee")
     public ResponseEntity<Ticket> removeAssignee(
             @PathVariable long ticketId,

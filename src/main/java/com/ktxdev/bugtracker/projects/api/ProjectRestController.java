@@ -3,6 +3,8 @@ package com.ktxdev.bugtracker.projects.api;
 import com.ktxdev.bugtracker.projects.model.Project;
 import com.ktxdev.bugtracker.projects.dto.ProjectDto;
 import com.ktxdev.bugtracker.projects.service.ProjectService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,12 +19,14 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Projects")
 @RequestMapping("api/v1/projects")
 public class ProjectRestController {
 
     private final ProjectService projectService;
 
     @PostMapping
+    @ApiOperation("Create project")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> createProject(
             @RequestBody ProjectDto projectDto,
@@ -37,6 +41,7 @@ public class ProjectRestController {
     }
 
     @PutMapping("{projectId}")
+    @ApiOperation("Update project")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> updateProject(
             @RequestBody ProjectDto projectDto,
@@ -47,6 +52,7 @@ public class ProjectRestController {
     }
 
     @GetMapping("{projectId}")
+    @ApiOperation("Get project by id")
     public ResponseEntity<Project> getProject(
             @PathVariable long projectId
     ) {
@@ -54,6 +60,7 @@ public class ProjectRestController {
     }
 
     @GetMapping
+    @ApiOperation("Get all projects")
     public ResponseEntity<Page<Project>> getAllProjects(
             @PageableDefault Pageable pageable
     ) {
@@ -61,6 +68,7 @@ public class ProjectRestController {
     }
 
     @PutMapping("{projectId}/members/add-member")
+    @ApiOperation("Add member to project")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> addMember(
             @PathVariable long projectId,
@@ -69,6 +77,7 @@ public class ProjectRestController {
         return ResponseEntity.ok(projectService.addMember(projectId, memberId));
     }
 
+    @ApiOperation("Remove member from project")
     @PutMapping("{projectId}/members/remove-member")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> removeMember(
@@ -79,6 +88,7 @@ public class ProjectRestController {
     }
 
     @DeleteMapping("{projectId}")
+    @ApiOperation("Delete project")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<?> deleteProject(
             @PathVariable long projectId

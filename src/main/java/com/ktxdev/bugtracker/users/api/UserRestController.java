@@ -3,6 +3,8 @@ package com.ktxdev.bugtracker.users.api;
 import com.ktxdev.bugtracker.users.dto.UserDto;
 import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import java.net.URI;
 import java.security.Principal;
 
 @RestController
+@Api(tags = "Users")
 @RequestMapping("api")
 @RequiredArgsConstructor
 @Slf4j(topic = "User Rest Controller")
@@ -25,6 +28,7 @@ public class UserRestController {
 
     private final UserService userService;
 
+    @ApiOperation("Create user")
     @PostMapping("v1/users")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<User> create(
@@ -38,6 +42,7 @@ public class UserRestController {
                 .body(userService.create(userDto));
     }
 
+    @ApiOperation("User sign up")
     @PostMapping("opn/v1/users/sign-up")
     public ResponseEntity<User> register(
             @RequestBody UserDto userDto,
@@ -50,6 +55,7 @@ public class UserRestController {
                 .body(userService.register(userDto));
     }
 
+    @ApiOperation("Update user")
     @PutMapping("v1/users/{userId}")
     public ResponseEntity<User> update(
             @RequestBody UserDto userDto,
@@ -59,6 +65,7 @@ public class UserRestController {
         return ResponseEntity.ok(userService.update(userDto));
     }
 
+    @ApiOperation("Get logged in user profile")
     @GetMapping("v1/users/profile")
     public ResponseEntity<User> profile(
             Principal principal
@@ -67,6 +74,7 @@ public class UserRestController {
     }
 
     @GetMapping("v1/users")
+    @ApiOperation("Get all users")
     public ResponseEntity<Page<User>> getAllUser(
             @PageableDefault(sort = "lastName") Pageable pageable,
             @RequestParam(required = false) String q

@@ -3,6 +3,9 @@ package com.ktxdev.bugtracker.comments.api;
 import com.ktxdev.bugtracker.comments.dto.CommentDto;
 import com.ktxdev.bugtracker.comments.model.Comment;
 import com.ktxdev.bugtracker.comments.service.CommentService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +19,14 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Comments")
 @RequestMapping("api/v1/comments")
 public class CommentRestController {
 
     private final CommentService commentService;
 
     @PostMapping
+    @ApiOperation("Create comment")
     public ResponseEntity<Comment> createComment(
             @RequestBody CommentDto commentDto,
             HttpServletRequest request
@@ -35,6 +40,7 @@ public class CommentRestController {
     }
 
     @PutMapping("{commentId}")
+    @ApiOperation("Update comment")
     public ResponseEntity<Comment> updateProject(
             @RequestBody CommentDto commentDto,
             @PathVariable long commentId
@@ -44,6 +50,7 @@ public class CommentRestController {
     }
 
     @GetMapping("{commentId}")
+    @ApiOperation("Get comment by Id")
     public ResponseEntity<Comment> getCommentById(
             @PathVariable long commentId
     ) {
@@ -51,6 +58,7 @@ public class CommentRestController {
     }
 
     @GetMapping
+    @ApiOperation("Get comments by ticket number")
     public ResponseEntity<Page<Comment>> getCommentsByTicket(
             @PageableDefault Pageable pageable,
             @RequestParam String ticketNo
@@ -59,6 +67,7 @@ public class CommentRestController {
     }
 
     @DeleteMapping("{commentId}")
+    @ApiOperation("Delete comment")
     public ResponseEntity<?> deleteComment(
             @PathVariable long commentId
     ) {
