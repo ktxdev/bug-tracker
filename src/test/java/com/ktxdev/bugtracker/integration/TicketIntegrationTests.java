@@ -153,4 +153,13 @@ public class TicketIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.assignees", hasSize(1)));
     }
+
+    @Test
+    @Order(9)
+    @WithMockUser
+    public void whenDelete_thenShouldBeNoContent() throws Exception {
+        mockMvc.perform(
+                        delete(String.format("%s/%d",baseUrl, 2)))
+                .andExpect(status().isNoContent());
+    }
 }
