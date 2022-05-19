@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ktxdev</groupId>
     <artifactId>bug-tracker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>bug-tracker</name>
     <description>bug-tracker</description>
     <properties>
