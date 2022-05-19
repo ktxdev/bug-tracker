@@ -63,4 +63,40 @@ public class CommentIntegrationTests {
                                 .content(json))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    @Order(2)
+    @WithMockUser
+    public void whenUpdateComment_thenShouldBeOk() throws Exception {
+        String json = "{" +
+                "\"text\": \"Ticket 1 Comment Test 1 Updated\"," +
+                "\"ticketId\": 1," +
+                "\"userId\": 3" +
+                "}";
+
+        mockMvc.perform(
+                        put(baseUrl + "/" + 1)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(3)
+    @WithMockUser
+    public void whenGetCommentById_thenShouldBeOk() throws Exception {
+        mockMvc.perform(
+                        get(baseUrl + "/" + 2))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(4)
+    @WithMockUser
+    public void whenGetCommentsByTicketNo_thenShouldBeOk() throws Exception {
+        mockMvc.perform(
+                        get(baseUrl + "?ticketNo=000001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)));
+    }
 }
