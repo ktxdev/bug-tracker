@@ -143,4 +143,14 @@ public class TicketIntegrationTests {
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
+
+    @Test
+    @Order(8)
+    @WithMockUser
+    public void whenRemoveAssignee_thenShouldBeOk() throws Exception {
+        mockMvc.perform(
+                        put(String.format("%s/%d/assignees/remove-assignee?assigneeId=%d",baseUrl, 1, 3)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.assignees", hasSize(1)));
+    }
 }
