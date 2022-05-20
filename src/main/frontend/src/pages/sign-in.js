@@ -78,7 +78,7 @@ const SignIn = () => {
                     </Typography>
                     <Box sx={{ py: 2 }}>
                         <Button
-                            color='secondary'
+                            color='info'
                             // disabled
                             fullWidth
                             size='large'
