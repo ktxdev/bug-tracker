@@ -1,13 +1,12 @@
-import { AddBox } from '@mui/icons-material';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import React from 'react'
+import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const Login = () => {
+const SignUp = () => {
 
     return (
         <Box sx={{ 
-            alignItems: 'center', 
+            alignItems: 'center',
             display: 'flex', 
             flexGrow: 1, 
             minHeight: '100%'}}>
@@ -18,9 +17,29 @@ const Login = () => {
                                 Bug Tracker
                             </Typography>
                             <Typography color="textSecondary" gutterBottom variant="body2">
-                                Please enter your email and password to sign in
+                                Please enter the following details to create an account
                             </Typography>
                         </Box>
+                        <TextField
+                            // error='Error'
+                            // helperText="Text"
+                            fullWidth
+                            label='First Name'
+                            margin='normal'
+                            type='text'
+                            variant='outlined'
+                            name='fname'
+                        />
+                        <TextField
+                            // error='Error'
+                            // helperText="Text"
+                            fullWidth
+                            label='Last Name'
+                            margin='normal'
+                            type='text'
+                            variant='outlined'
+                            name='lname'
+                        />
                         <TextField
                             // error='Error'
                             // helperText="Text"
@@ -41,6 +60,16 @@ const Login = () => {
                             variant='outlined'
                             name='password'
                         />
+                        <TextField
+                            // error='Error'
+                            // helperText="Text"
+                            fullWidth
+                            label='Confirm Password'
+                            margin='normal'
+                            type='password'
+                            variant='outlined'
+                            name='confirmPassword'
+                        />
                         <Box sx={{ py: 2 }}>
                             <Button
                                 color='primary'
@@ -49,6 +78,7 @@ const Login = () => {
                                 size='large'
                                 type='submit'
                                 variant='contained'
+                                sx={{ mb: 1 }}
                             >
                                 Sign In
                             </Button>
@@ -56,14 +86,15 @@ const Login = () => {
                                 color='textSecondary'
                                 variant='body2'
                             >
-                                Dom&apos;t have an account?
+                                Have an account?{' '}
                                 <Link 
-                                    to="/sign-up"
+                                    to="/sign-in"
                                     variant="subtitle2"
+                                    color="textPrimary"
                                     underline="hover"
-                                    sx={{ my: 2, cursor: 'pointer'}}
+                                    sx={{ cursor: 'pointer'}}
                                 >
-                                    Sign Up
+                                    Sign In
                                 </Link>
                             </Typography>
                         </Box>
@@ -73,4 +104,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default SignUp;
