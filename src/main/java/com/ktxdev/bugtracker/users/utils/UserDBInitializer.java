@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component
 @RequiredArgsConstructor
 public class UserDBInitializer implements InitializingBean {
@@ -27,12 +29,18 @@ public class UserDBInitializer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        val user = User.builder()
+        val admin = User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .role(UserRole.ADMIN)
                 .build();
 
-        userDao.save(user);
+        val user = User.builder()
+                .email("user@ktxdev.com")
+                .password(passwordEncoder.encode("Demo123"))
+                .role(UserRole.USER)
+                .build();
+
+        userDao.saveAll(Arrays.asList(admin, user));
     }
 }

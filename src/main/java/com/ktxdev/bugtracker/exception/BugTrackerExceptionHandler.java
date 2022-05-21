@@ -62,9 +62,9 @@ public class BugTrackerExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(InvalidRequestException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ErrorResponse handleResourceNotFoundException(
-            BadCredentialsException ex
+            ResourceNotFoundException ex
     ) {
         return ErrorResponse.builder()
                 .timestamp(System.currentTimeMillis())
