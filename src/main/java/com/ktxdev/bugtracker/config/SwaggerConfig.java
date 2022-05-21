@@ -15,7 +15,6 @@ import java.util.Collections;
 
 @Configuration
 @EnableSwagger2
-@EnableWebMvc
 //@Profile(value = {"dev", "test"})
 public class SwaggerConfig {
 
