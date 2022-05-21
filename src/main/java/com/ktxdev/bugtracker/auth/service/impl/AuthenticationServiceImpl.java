@@ -35,6 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
         } catch (LockedException | DisabledException | BadCredentialsException ex) {
             log.error("### Authentication failed: {}", ex.getMessage());
+            throw ex;
         }
 
         val user = (User) userDetailsService.loadUserByUsername(requestDto.getEmail());
