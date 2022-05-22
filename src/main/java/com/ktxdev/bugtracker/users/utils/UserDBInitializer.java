@@ -35,12 +35,16 @@ public class UserDBInitializer implements InitializingBean {
                 .role(UserRole.ADMIN)
                 .build();
 
+        if (!userDao.existsByEmail(email))
+            userDao.save(admin);
+
         val user = User.builder()
                 .email("user@ktxdev.com")
                 .password(passwordEncoder.encode("Demo123"))
                 .role(UserRole.USER)
                 .build();
 
-        userDao.saveAll(Arrays.asList(admin, user));
+        if (!userDao.existsByEmail("user@ktxdev.com"))
+            userDao.save(user);
     }
 }
