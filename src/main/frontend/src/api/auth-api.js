@@ -1,7 +1,5 @@
-import API from "./api-core"
+import { post } from './api-core.js'
 
 export const authenticate = async (credentials) => {
-    return await API.post(
-        '/opn/v1/authenticate', 
-        JSON.stringify(credentials));
+    return post('/opn/v1/authenticate', credentials);
 }

@@ -7,4 +7,13 @@ const API = axios.create({
     }
 });
 
-export default API;
+const post = async (url, request = null, headers = null) => {
+    return await API.post(url, JSON.stringify(request), { headers: headers })
+        .then(res => {
+            return { success: true, data: res.data }
+        }).catch(err => {
+            return { success: false, data: err.response.data }
+        });
+}
+
+export { post };

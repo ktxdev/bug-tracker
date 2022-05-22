@@ -19,16 +19,16 @@ export const AuthProvider = ({ children }) => {
 
     const signIn = async (credentials, callback) => {
         const response = await authenticate(credentials);
-        if (response.status === 200) {
-            const data = response.data;
+        const data = response.data;
+        if (response.success) {
             setAuth({
                 ...defaultAuth,
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken
             });
-            callback();
+            callback(response.success)
         } else {
-            //handle error
+            callback(response.success, response.data.message)
         }
     }
 
