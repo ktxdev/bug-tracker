@@ -1,8 +1,13 @@
-import React from 'react'
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const SignUp = () => {
+
+    useEffect(() => {
+        document.title = 'Sign Up | Bug Tracker'; 
+      }, []);
+    
 
     return (
         <Box sx={{ 

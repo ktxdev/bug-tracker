@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Box, Button, Container, Grid, Snackbar, TextField, Typography } from '@mui/material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/auth';
 import { useAlert } from '../utils/AlertContext';
 
 const SignIn = () => {
+
+    useEffect(() => {
+        document.title = 'Sign In | Bug Tracker';
+    }, [])
+
+
     const [credentials, setCredentials] = useState({
         email: '',
         password: ''
@@ -13,7 +19,7 @@ const SignIn = () => {
     const location = useLocation();
     const auth = useAuth();
 
-    const {setFeedback} = useAlert();
+    const { setFeedback } = useAlert();
 
     const handleSignIn = (event) => {
         event.preventDefault();
@@ -21,13 +27,13 @@ const SignIn = () => {
         const from = location.state?.from?.pathname || "/";
 
         auth.signIn(credentials, (success, message = null) => {
-            if(success) {
-                setFeedback({open: true, severity: 'success', title: 'Sign in successful'})
+            if (success) {
+                setFeedback({ open: true, severity: 'success', title: 'Sign in successful' })
                 navigate(from, { replace: true });
             } else {
-                setFeedback({open: true, severity: 'error', title: message})
+                setFeedback({ open: true, severity: 'error', title: message })
             }
-            
+
         })
     }
 
