@@ -1,8 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/auth';
 
 const SignIn = () => {
+    const [credentials, setCredentials] = useState({
+        email: '',
+        password: ''
+    })
+    const navigate = useNavigate();
+    const location = useLocation();
+    const auth = useAuth();
+
+    let from = location.state?.from?.pathname || "/";
+
+    const handleSignIn = (event) => {
+        event.preventDefault();
+        
+        auth.signIn(credentials, () => {
+            console.log('Signed');
+            navigate(from, { replace: true });
+        })
+    }
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setCredentials({
+            ...credentials,
+            [name]: value
+        })
+    }
 
     return (
         <Box sx={{
@@ -12,7 +39,7 @@ const SignIn = () => {
             minHeight: '100%'
         }}>
             <Container maxWidth="sm">
-                <form>
+                <form onSubmit={handleSignIn} >
                     <Box sx={{ my: 3, textAlign: 'center' }}>
                         <Typography color="textPrimary" variant="h4">
                             Bug Tracker
@@ -30,6 +57,8 @@ const SignIn = () => {
                         type='email'
                         variant='outlined'
                         name='email'
+                        value={credentials.email}
+                        onChange={handleInputChange}
                     />
                     <TextField
                         // error='Error'
@@ -40,6 +69,8 @@ const SignIn = () => {
                         type='password'
                         variant='outlined'
                         name='password'
+                        value={credentials.password}
+                        onChange={handleInputChange}
                     />
                     <Box sx={{ py: 2 }}>
                         <Button
@@ -82,7 +113,6 @@ const SignIn = () => {
                             // disabled
                             fullWidth
                             size='large'
-                            type='submit'
                             variant='contained'
                             sx={{ mb: 1, textTransform: 'none' }}
                         >
@@ -93,7 +123,6 @@ const SignIn = () => {
                             // disabled
                             fullWidth
                             size='large'
-                            type='submit'
                             variant='contained'
                             sx={{ mb: 1, textTransform: 'none' }}
                         >
