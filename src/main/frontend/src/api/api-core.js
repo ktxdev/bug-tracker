@@ -16,4 +16,13 @@ const post = async (url, request = null, headers = null) => {
         });
 }
 
-export { post };
+const get = async (url, headers = null) => {
+    return await API.get(url, { headers: headers })
+        .then(res => {
+            return { success: true, data: res.data }
+        }).catch(err => {
+            return { success: false, data: err.response.data }
+        });
+}
+
+export { post, get };

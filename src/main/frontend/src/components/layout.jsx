@@ -1,12 +1,32 @@
-import { CssBaseline, ThemeProvider, Toolbar, Typography } from '@mui/material'
+import { CssBaseline, ThemeProvider, Toolbar } from '@mui/material'
 import { Box, Container } from '@mui/system'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './navbar'
 import Sidebar from './sidebar'
 import { theme } from '../theme/index.js'
 import { Outlet } from 'react-router-dom'
+import { useAuth } from '../auth/auth'
+import { get } from '../api/api-core'
 
 const Layout = () => {
+
+  const { auth,  setProfile } = useAuth();
+
+  useEffect(() => {
+    getProfile()
+  }, [])
+
+  const getProfile = async () => {
+    const headers = {
+      'Authorization': 'Bearer ' + auth.accessToken
+    };
+
+    const response = await get('/v1/users/profile', headers);
+    if (response.success) {
+      setProfile(response.data)
+    }
+  }
+
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = () => {
