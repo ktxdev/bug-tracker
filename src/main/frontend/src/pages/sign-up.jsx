@@ -9,7 +9,7 @@ const SignUp = () => {
             alignItems: 'center',
             display: 'flex', 
             flexGrow: 1, 
-            minHeight: '100%'}}>
+            minHeight: '100vh'}}>
                 <Container maxWidth="sm">
                     <form>
                         <Box sx={{ my: 3, textAlign: 'center' }}>

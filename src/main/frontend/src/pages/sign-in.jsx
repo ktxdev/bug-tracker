@@ -16,7 +16,7 @@ const SignIn = () => {
 
     const handleSignIn = (event) => {
         event.preventDefault();
-        
+
         auth.signIn(credentials, () => {
             console.log('Signed');
             navigate(from, { replace: true });
@@ -36,7 +36,7 @@ const SignIn = () => {
             alignItems: 'center',
             display: 'flex',
             flexGrow: 1,
-            minHeight: '100%'
+            minHeight: '100vh'
         }}>
             <Container maxWidth="sm">
                 <form onSubmit={handleSignIn} >
