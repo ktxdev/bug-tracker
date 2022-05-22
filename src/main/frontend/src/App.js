@@ -1,9 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
+import Feedback from './components/feedback';
+import { useAlert } from './utils/AlertContext';
 
 const App = () => {
+  const {feedback, handleCloseFeedback} = useAlert();
+
   return (
-    <Outlet />
+    <>
+      <Feedback {...feedback} handleClose={handleCloseFeedback} />
+      <Outlet />
+    </>
   );
 }
 

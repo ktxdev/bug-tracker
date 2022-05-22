@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Alert, Box, Button, Container, Grid, Snackbar, TextField, Typography } from '@mui/material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/auth';
-import Feedback from '../components/feedback';
+import { useAlert } from '../utils/AlertContext';
 
 const SignIn = () => {
     const [credentials, setCredentials] = useState({
@@ -13,14 +13,7 @@ const SignIn = () => {
     const location = useLocation();
     const auth = useAuth();
 
-    const defaultFeedback = {
-        severity: 'error',
-        title: '',
-        open: false
-    };
-    const [feedback, setFeedback] = useState(defaultFeedback);
-
-    const handleCloseFeedback = () => setFeedback(defaultFeedback);
+    const {setFeedback} = useAlert();
 
     const handleSignIn = (event) => {
         event.preventDefault();
@@ -28,15 +21,11 @@ const SignIn = () => {
         const from = location.state?.from?.pathname || "/";
 
         auth.signIn(credentials, (success, message = null) => {
-            console.log('Inside callback..');
             if(success) {
+                setFeedback({open: true, severity: 'success', title: 'Sign in successful'})
                 navigate(from, { replace: true });
             } else {
-                setFeedback({
-                    open: true,
-                    severity: 'error',
-                    title: message
-                })
+                setFeedback({open: true, severity: 'error', title: message})
             }
             
         })
@@ -57,7 +46,6 @@ const SignIn = () => {
             flexGrow: 1,
             minHeight: '100vh'
         }}>
-            <Feedback {...feedback} handleClose={handleCloseFeedback} />
             <Container maxWidth="sm">
                 <form onSubmit={handleSignIn} >
                     <Box sx={{ my: 3, textAlign: 'center' }}>

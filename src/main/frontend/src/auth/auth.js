@@ -13,10 +13,6 @@ const AuthContext = React.createContext(null);
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(defaultAuth);
 
-    useEffect(() => {
-        console.log(auth);
-    }, [auth]);
-
     const signIn = async (credentials, callback) => {
         const response = await authenticate(credentials);
         const data = response.data;
