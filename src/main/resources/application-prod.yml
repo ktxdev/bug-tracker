@@ -13,7 +13,12 @@ server:
 
 system:
   defaults:
-    email: admin@ktxdev.com
-    password: P@ssw0rd
+    users:
+      admin:
+        email: 'admin@ktxdev.com'
+        password: 'P@ssw0rd'
+      user:
+        email: 'user@ktxdev.com'
+        password: 'Demo123'
   jwt:
     secret: '$M#h5UjccJFS^J_m'
