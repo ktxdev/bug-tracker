@@ -28,4 +28,10 @@ public class AuthenticationRestController {
         return ResponseEntity.ok(authenticationService.authenticate(requestDto));
     }
 
+    @PostMapping("demo-admin")
+    @ApiOperation("Login/Sign In As Demo Admin")
+    public ResponseEntity<AuthenticationResponseDto> authenticate() {
+        return ResponseEntity.ok(authenticationService.authenticateDemoAdmin());
+    }
+
 }

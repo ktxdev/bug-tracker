@@ -5,4 +5,6 @@ import com.ktxdev.bugtracker.auth.dto.AuthenticationResponseDto;
 
 public interface AuthenticationService {
     AuthenticationResponseDto authenticate(AuthenticationRequestDto requestDto);
+
+    AuthenticationResponseDto authenticateDemoAdmin();
 }

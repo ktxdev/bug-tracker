@@ -26,6 +26,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("system.jwt.secret")
     private String secret;
+
+    @Value("${system.defaults.users.admin.email}")
+    private String adminEmail;
+
+    @Value("${system.defaults.users.admin.password}")
+    private String adminPassword;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
@@ -54,5 +60,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .sign(algorithm);
 
         return new AuthenticationResponseDto(accessToken, refreshToken);
+    }
+
+    @Override
+    public AuthenticationResponseDto authenticateDemoAdmin() {
+        val authRequest = AuthenticationRequestDto.builder()
+                .email(adminEmail)
+                .password(adminPassword)
+                .build();
+
+        return authenticate(authRequest);
     }
 }
