@@ -32,6 +32,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${system.defaults.users.admin.password}")
     private String adminPassword;
+
+    @Value("${system.defaults.users.user.email}")
+    private String userEmail;
+
+    @Value("${system.defaults.users.user.password}")
+    private String userPassword;
+
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
@@ -67,6 +74,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         val authRequest = AuthenticationRequestDto.builder()
                 .email(adminEmail)
                 .password(adminPassword)
+                .build();
+
+        return authenticate(authRequest);
+    }
+
+    @Override
+    public AuthenticationResponseDto authenticateDemoUser() {
+        val authRequest = AuthenticationRequestDto.builder()
+                .email(userEmail)
+                .password(userPassword)
                 .build();
 
         return authenticate(authRequest);

@@ -7,4 +7,6 @@ public interface AuthenticationService {
     AuthenticationResponseDto authenticate(AuthenticationRequestDto requestDto);
 
     AuthenticationResponseDto authenticateDemoAdmin();
+
+    AuthenticationResponseDto authenticateDemoUser();
 }
