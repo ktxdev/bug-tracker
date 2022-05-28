@@ -52,7 +52,7 @@ const Layout = () => {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="2xl" sx={{ mt: 4, mb: 4 }}>
             <Outlet />
           </Container>
         </Box>

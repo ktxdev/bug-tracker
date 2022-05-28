@@ -6,6 +6,8 @@ import { useAlert } from '../utils/AlertContext';
 
 const SignIn = () => {
 
+    const [canSignIn, setCanSignIn] = useState(false);
+
     useEffect(() => {
         document.title = 'Sign In | Bug Tracker';
     }, [])
@@ -15,6 +17,11 @@ const SignIn = () => {
         email: '',
         password: ''
     })
+
+    useEffect(() => {
+        setCanSignIn(credentials.email !== '' && credentials.password !== '')
+    }, [credentials])
+
     const navigate = useNavigate();
     const location = useLocation();
     const auth = useAuth();
@@ -42,7 +49,7 @@ const SignIn = () => {
         setCredentials({
             ...credentials,
             [name]: value
-        })
+        })      
     }
 
     return (
@@ -89,7 +96,7 @@ const SignIn = () => {
                     <Box sx={{ py: 2 }}>
                         <Button
                             color='primary'
-                            // disabled
+                            disabled={ !canSignIn }
                             fullWidth
                             size='large'
                             type='submit'
