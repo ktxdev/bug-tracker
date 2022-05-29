@@ -10,7 +10,9 @@ const AlertProvider = ({ children }) => {
     };
     const [feedback, setFeedback] = useState(defaultFeedback);
 
-    const handleCloseFeedback = () => setFeedback(defaultFeedback);
+    const handleCloseFeedback = () => setFeedback(prev => {
+        return { ...defaultFeedback, severity: prev.severity }
+    });
 
     return <AlertContext.Provider value={{feedback, setFeedback, handleCloseFeedback}}>{children}</AlertContext.Provider>
 }

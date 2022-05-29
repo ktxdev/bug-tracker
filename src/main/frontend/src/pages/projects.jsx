@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Avatar, AvatarGroup, Box, Button, Card, CardActions, CardContent, Divider, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
-import { width } from "@mui/system";
+import { Avatar, AvatarGroup, Box, Button, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import ProjectDetails from "../components/projects/ProjectDetails";
 import { createProject, getAllProjects } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
@@ -40,6 +39,7 @@ const Projects = () => {
   useEffect(() => {
     const getProjects = async () => {
       const response = await getAllProjects(accessToken);
+
       if (response.success) {
         setProjects(response.data.content);
       } else {
@@ -52,7 +52,7 @@ const Projects = () => {
     }
 
     getProjects();
-  }, [])
+  }, [projects])
 
   const saveProject = async () => {
     const response = await createProject(project, accessToken);
@@ -64,9 +64,9 @@ const Projects = () => {
         severity: 'success',
         title: 'Project successfully created!'
       })
-
       setProject(initProjectState)
       toggleModal();
+      setProjects([...projects, data])
     } else {
       setFeedback({
         open: true,
@@ -109,7 +109,7 @@ const Projects = () => {
         onSave={saveProject} />
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer>
           <Table>
             <TableHead >
               <TableRow>
@@ -135,7 +135,7 @@ const Projects = () => {
                           return (<TableCell key={column.id} align={column.align}
                             style={{ minWidth: column.minWidth }}>
                             {
-                              typeof value === 'object' ?
+                              value !== null && typeof value === 'object' ?
                                 <AvatarGroup max={4} sx={{ width: 'max-content' }} >
                                   {value.map(v => <Avatar>{getName(v.name)}</Avatar>)}
                                 </AvatarGroup> : value
