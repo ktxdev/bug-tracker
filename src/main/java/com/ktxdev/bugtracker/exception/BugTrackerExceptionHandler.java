@@ -51,7 +51,7 @@ public class BugTrackerExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidRequestException.class)
     public ErrorResponse handleInvalidRequestException(
-            BadCredentialsException ex
+            InvalidRequestException ex
     ) {
         return ErrorResponse.builder()
                 .timestamp(System.currentTimeMillis())
