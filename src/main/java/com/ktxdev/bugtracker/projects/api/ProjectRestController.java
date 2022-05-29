@@ -27,7 +27,7 @@ public class ProjectRestController {
 
     @PostMapping
     @ApiOperation("Create project")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> createProject(
             @RequestBody ProjectDto projectDto,
             HttpServletRequest request
@@ -42,7 +42,7 @@ public class ProjectRestController {
 
     @PutMapping("{projectId}")
     @ApiOperation("Update project")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> updateProject(
             @RequestBody ProjectDto projectDto,
             @PathVariable long projectId
@@ -69,7 +69,7 @@ public class ProjectRestController {
 
     @PutMapping("{projectId}/members/add-member")
     @ApiOperation("Add member to project")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> addMember(
             @PathVariable long projectId,
             @RequestParam long memberId
@@ -79,7 +79,7 @@ public class ProjectRestController {
 
     @ApiOperation("Remove member from project")
     @PutMapping("{projectId}/members/remove-member")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> removeMember(
             @PathVariable long projectId,
             @RequestParam long memberId
@@ -89,7 +89,7 @@ public class ProjectRestController {
 
     @DeleteMapping("{projectId}")
     @ApiOperation("Delete project")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<?> deleteProject(
             @PathVariable long projectId
     ) {
