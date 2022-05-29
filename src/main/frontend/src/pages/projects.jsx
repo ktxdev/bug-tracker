@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Card, CardActions, CardContent, Divider, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import { width } from "@mui/system";
 import ProjectDetails from "../components/projects/ProjectDetails";
-import { createProject } from "../api/projects-api";
+import { createProject, getAllProjects } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
 
@@ -12,17 +12,6 @@ const columns = [
   { id: 'description', label: 'Description', minWidth: 100, align: 'left' },
   { id: 'members', label: 'Members', minWidth: 170, align: 'left' }
 ];
-
-function createData(name, description, members) {
-  return { name, description, members };
-}
-
-const rows = [
-  createData('Bug Tracker', 'Bug Tracker description', [{ name: 'Sean Huvaya' }, { name: 'Tinashe Chisenga' }]),
-  createData('Expense Tracker', 'Expense Tracker description', [{ name: 'Sean Huvaya' }]),
-  createData('Chat Application', 'Chat Application description', [{ name: 'Tinashe Chisenga' }]),
-];
-
 
 const Projects = () => {
 
@@ -37,33 +26,52 @@ const Projects = () => {
 
   const [modalOpen, setModalOpen] = useState(false)
 
-  const initProjectState = { name: '', description: ''}
+  const initProjectState = { name: '', description: '' }
   const [project, setProject] = useState(initProjectState)
 
   const toggleModal = () => setModalOpen(!modalOpen)
 
-  const { auth: { accessToken }} = useAuth();
+  const { auth: { accessToken } } = useAuth();
 
   const { setFeedback } = useAlert();
 
+  const [projects, setProjects] = useState([])
+
+  useEffect(() => {
+    const getProjects = async () => {
+      const response = await getAllProjects(accessToken);
+      if (response.success) {
+        setProjects(response.data.content);
+      } else {
+        setFeedback({
+          open: true,
+          severity: 'error',
+          title: 'Failed to load projects. Please refresh page.'
+        })
+      }
+    }
+
+    getProjects();
+  }, [])
+
   const saveProject = async () => {
-    const response  = await createProject(project, accessToken);
+    const response = await createProject(project, accessToken);
     const data = response.data;
-    if(response.success) {
+    if (response.success) {
       console.log(data);
-      setFeedback({ 
-        open: true, 
-        severity: 'success', 
-        title: 'Project successfully created!' 
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: 'Project successfully created!'
       })
 
       setProject(initProjectState)
       toggleModal();
     } else {
-      setFeedback({ 
-        open: true, 
-        severity: 'error', 
-        title: data.message 
+      setFeedback({
+        open: true,
+        severity: 'error',
+        title: data.message
       })
     }
   }
@@ -93,10 +101,10 @@ const Projects = () => {
         </Button>
       </Box>
 
-      <ProjectDetails 
-        modalOpen={modalOpen} 
+      <ProjectDetails
+        modalOpen={modalOpen}
         toggleModal={toggleModal}
-        project={project} 
+        project={project}
         setProject={setProject}
         onSave={saveProject} />
 
@@ -118,12 +126,12 @@ const Projects = () => {
             </TableHead>
             <TableBody>
               {
-                rows.map(row => {
+                projects.map(project => {
                   return (
-                    <TableRow key={row.name}>
+                    <TableRow key={project.id}>
                       {
                         columns.map(column => {
-                          const value = row[column.id];
+                          const value = project[column.id];
                           return (<TableCell key={column.id} align={column.align}
                             style={{ minWidth: column.minWidth }}>
                             {
