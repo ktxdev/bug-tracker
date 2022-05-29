@@ -1,4 +1,3 @@
-import { useAuth } from "../auth/auth"
 import { get, post } from "./api-core"
 
 const baseUrl = '/v1/projects'

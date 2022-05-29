@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { Avatar, AvatarGroup, Box, Button, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import ProjectDetails from "../components/projects/ProjectDetails";
 import { createProject, getAllProjects } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
+import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
 
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170, align: 'left' },
   { id: 'description', label: 'Description', minWidth: 100, align: 'left' },
-  { id: 'members', label: 'Members', minWidth: 170, align: 'left' }
+  { id: 'members', label: 'Members', minWidth: 170, align: 'left' },
+  { id: 'actions', label: '', minWidth: 170, align: 'left' },
 ];
 
 const Projects = () => {
@@ -57,6 +59,7 @@ const Projects = () => {
   const saveProject = async () => {
     const response = await createProject(project, accessToken);
     const data = response.data;
+
     if (response.success) {
       console.log(data);
       setFeedback({
@@ -66,6 +69,7 @@ const Projects = () => {
       })
       setProject(initProjectState)
       toggleModal();
+
       setProjects([...projects, data])
     } else {
       setFeedback({
@@ -131,6 +135,21 @@ const Projects = () => {
                     <TableRow key={project.id}>
                       {
                         columns.map(column => {
+                          if (column.id === 'actions') {
+                            return (<TableCell
+                              key={column.id}>
+                                <IconButton color="success" size="small" >
+                                  <Visibility />
+                                </IconButton>
+                                <IconButton color="primary" size="small" sx={{ mx: 1 }} >
+                                  <NoteAlt />
+                                </IconButton>
+                                <IconButton color="error" size="small" >
+                                  <Delete />
+                                </IconButton>
+                            </TableCell>)
+                          }
+
                           const value = project[column.id];
                           return (<TableCell key={column.id} align={column.align}
                             style={{ minWidth: column.minWidth }}>
