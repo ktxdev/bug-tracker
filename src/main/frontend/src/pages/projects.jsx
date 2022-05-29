@@ -1,5 +1,7 @@
-import { useEffect } from "react";
-import { Avatar, AvatarGroup, Box, Button, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
+import { useEffect, useState } from "react";
+import { Avatar, AvatarGroup, Box, Button, Card, CardActions, CardContent, Divider, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
+import { width } from "@mui/system";
+import ProjectDetails from "../components/projects/ProjectDetails";
 
 
 const columns = [
@@ -28,7 +30,14 @@ const Projects = () => {
   const getName = (name) => {
     const names = name.split(' ');
     return names[0][0] + names[1][0];
-  } 
+  }
+
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const initProjectState = { name: '', description: ''}
+  const [project, setProject] = useState(initProjectState)
+
+  const toggleModal = () => setModalOpen(!modalOpen)
 
   return (
     <div>
@@ -49,10 +58,13 @@ const Projects = () => {
           size='small'
           variant='contained'
           sx={{ mb: 1, textTransform: 'none' }}
+          onClick={toggleModal}
         >
           New Project
         </Button>
       </Box>
+
+      <ProjectDetails modalOpen={modalOpen} toggleModal={toggleModal} project={project} setProject={setProject} />
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -78,7 +90,6 @@ const Projects = () => {
                       {
                         columns.map(column => {
                           const value = row[column.id];
-                          console.log(typeof value);
                           return (<TableCell key={column.id} align={column.align}
                             style={{ minWidth: column.minWidth }}>
                             {
