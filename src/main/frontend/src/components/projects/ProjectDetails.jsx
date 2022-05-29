@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, Divider, Modal, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-const ProjectDetails = ({modalOpen, toggleModal, project, setProject}) => {
+const ProjectDetails = ({modalOpen, toggleModal, project, setProject, onSave}) => {
 
     const [canSave, setCanSave] = useState(false)
 
@@ -12,6 +12,11 @@ const ProjectDetails = ({modalOpen, toggleModal, project, setProject}) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setProject({ ...project, [name]: value })
+    }
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        onSave()
     }
 
     return (
@@ -34,7 +39,7 @@ const ProjectDetails = ({modalOpen, toggleModal, project, setProject}) => {
                     <Divider sx={{
                         my: 1
                     }} />
-                    <form>
+                    <form onSubmit={handleFormSubmit} >
                         <TextField
                             required
                             id="outlined-required"

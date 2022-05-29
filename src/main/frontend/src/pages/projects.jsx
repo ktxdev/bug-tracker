@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Card, CardActions, CardContent, Divider, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import { width } from "@mui/system";
 import ProjectDetails from "../components/projects/ProjectDetails";
+import { createProject } from "../api/projects-api";
+import { useAuth } from "../auth/auth";
+import { useAlert } from "../utils/AlertContext";
 
 
 const columns = [
@@ -39,6 +42,32 @@ const Projects = () => {
 
   const toggleModal = () => setModalOpen(!modalOpen)
 
+  const { auth: { accessToken }} = useAuth();
+
+  const { setFeedback } = useAlert();
+
+  const saveProject = async () => {
+    const response  = await createProject(project, accessToken);
+    const data = response.data;
+    if(response.success) {
+      console.log(data);
+      setFeedback({ 
+        open: true, 
+        severity: 'success', 
+        title: 'Project successfully created!' 
+      })
+
+      setProject(initProjectState)
+      toggleModal();
+    } else {
+      setFeedback({ 
+        open: true, 
+        severity: 'error', 
+        title: data.message 
+      })
+    }
+  }
+
   return (
     <div>
       <Typography
@@ -64,7 +93,12 @@ const Projects = () => {
         </Button>
       </Box>
 
-      <ProjectDetails modalOpen={modalOpen} toggleModal={toggleModal} project={project} setProject={setProject} />
+      <ProjectDetails 
+        modalOpen={modalOpen} 
+        toggleModal={toggleModal}
+        project={project} 
+        setProject={setProject}
+        onSave={saveProject} />
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
