@@ -22,13 +22,13 @@ const Layout = () => {
       'Authorization': 'Bearer ' + auth.accessToken
     };
 
-    const response = await get('/v1/users/profile', headers);
+    const response = await get('/v1/users/my-profile', headers);
     if (response.success) {
       setProfile(response.data)
     }
   }
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const toggleDrawer = () => {
     setOpen(!open);

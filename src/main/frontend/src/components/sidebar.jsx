@@ -3,6 +3,7 @@ import NavItem from "./nav-item";
 import MuiDrawer from '@mui/material/Drawer';
 import { AccountCircle, Assignment, BarChart, ChevronLeft, ConfirmationNumber, Group } from "@mui/icons-material";
 import { Divider, IconButton, List, styled, Toolbar } from '@mui/material';
+import { useAuth } from '../auth/auth';
 
 const items = [
     {
@@ -62,6 +63,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const Sidebar = ({ open, toggleDrawer }) => {
+
+    const { auth: {profile}} = useAuth();
+
     return (
         <Drawer variant="permanent" open={open}>
             <Toolbar
@@ -78,7 +82,10 @@ const Sidebar = ({ open, toggleDrawer }) => {
             </Toolbar>
             <Divider />
             <List component="nav">
-                {items.map(item=> <NavItem {...item} open={open} />)}
+                {items
+                    .filter(item => profile != null && ((profile.role === 'USER' && item.href !== '/users') 
+                        || (profile.role === 'ADMIN')))
+                    .map(item=> <NavItem key={item.href} {...item} open={open} />)}
             </List>
         </Drawer>
     )

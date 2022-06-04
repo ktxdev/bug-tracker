@@ -46,7 +46,6 @@ const UserDetails = ({ modalOpen, toggleModal, user, setUser, onSave }) => {
                     <form onSubmit={handleSubmit} >
                         <TextField
                             required
-                            id="outlined-required"
                             label="First Name"
                             name="firstName"
                             size='small'
@@ -57,7 +56,6 @@ const UserDetails = ({ modalOpen, toggleModal, user, setUser, onSave }) => {
 
                         <TextField
                             required
-                            id="outlined-required"
                             label="Last Name"
                             name="lastName"
                             size='small'
@@ -68,7 +66,6 @@ const UserDetails = ({ modalOpen, toggleModal, user, setUser, onSave }) => {
 
                         <TextField
                             required
-                            id="outlined-required"
                             label="Email"
                             name="email"
                             size='small'
@@ -80,7 +77,6 @@ const UserDetails = ({ modalOpen, toggleModal, user, setUser, onSave }) => {
 
                         <TextField
                             required
-                            id="outlined-required"
                             label="Password"
                             name="password"
                             size='small'
@@ -93,7 +89,6 @@ const UserDetails = ({ modalOpen, toggleModal, user, setUser, onSave }) => {
 
                         <TextField
                             required
-                            id="outlined-required"
                             label="Confirm Password"
                             name="confirmPassword"
                             size='small'

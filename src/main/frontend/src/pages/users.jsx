@@ -153,8 +153,8 @@ const Users = () => {
                                     <IconButton onClick={() => onEdit(user.id)} color="primary" size="small" sx={{ mx: 1 }} >
                                       <NoteAlt />
                                     </IconButton>
-                                    <IconButton color="error" size="small" >
-                                      <Delete onClick={() => onDelete(user.id)} />
+                                    <IconButton onClick={() => onDelete(user.id)} color="error" size="small" >
+                                      <Delete />
                                     </IconButton>
                                   </TableCell>)
                                 }
