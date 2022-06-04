@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { authenticate } from "../api/auth-api";
+import { authenticate, authenticateDemoAdmin, authenticateDemoUser } from "../api/auth-api";
 
 const defaultAuth = {
     profile: null,
@@ -28,6 +28,36 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const demoAdminSignIn = async (callback) => {
+        const response = await authenticateDemoAdmin();
+        const data = response.data;
+        if (response.success) {
+            setAuth({
+                ...defaultAuth,
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken
+            });
+            callback(response.success)
+        } else {
+            callback(response.success, response.data.message)
+        }
+    }
+
+    const demoUserSignIn = async (callback) => {
+        const response = await authenticateDemoUser();
+        const data = response.data;
+        if (response.success) {
+            setAuth({
+                ...defaultAuth,
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken
+            });
+            callback(response.success)
+        } else {
+            callback(response.success, response.data.message)
+        }
+    }
+
     const signOut = (callback) => {
         setAuth(defaultAuth);
         callback();
@@ -40,7 +70,7 @@ export const AuthProvider = ({ children }) => {
         });
     }
 
-    const contextValue = { auth, signIn, signOut, setProfile };
+    const contextValue = { auth, demoAdminSignIn, demoUserSignIn, signIn, signOut, setProfile };
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }

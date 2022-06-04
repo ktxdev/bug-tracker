@@ -3,6 +3,7 @@ import { Alert, Box, Button, Container, Grid, Snackbar, TextField, Typography } 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/auth';
 import { useAlert } from '../utils/AlertContext';
+import { authenticateDemoAdmin } from '../api/auth-api';
 
 const SignIn = () => {
 
@@ -40,8 +41,26 @@ const SignIn = () => {
             } else {
                 setFeedback({ open: true, severity: 'error', title: message })
             }
-
         })
+    }
+
+    const signInAsDemoUser = (admin = false) => {
+        const from = location.state?.from?.pathname || "/";
+
+        const authCallback = (success, message = null) => {
+            if (success) {
+                setFeedback({ open: true, severity: 'success', title: 'Sign in successful' })
+                navigate(from, { replace: true });
+            } else {
+                setFeedback({ open: true, severity: 'error', title: message })
+            }
+        }
+
+        if(admin) {
+            auth.demoAdminSignIn(authCallback);
+        } else {
+            auth.demoUserSignIn(authCallback);
+        }
     }
 
     const handleInputChange = (event) => {
@@ -131,7 +150,7 @@ const SignIn = () => {
                     <Box sx={{ py: 2 }}>
                         <Button
                             color='info'
-                            // disabled
+                            onClick={() => signInAsDemoUser()}
                             fullWidth
                             size='large'
                             variant='contained'
@@ -141,8 +160,8 @@ const SignIn = () => {
                         </Button>
                         <Button
                             color='error'
-                            // disabled
                             fullWidth
+                            onClick={() => signInAsDemoUser(true)}
                             size='large'
                             variant='contained'
                             sx={{ mb: 1, textTransform: 'none' }}
