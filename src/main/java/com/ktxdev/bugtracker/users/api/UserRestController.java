@@ -30,7 +30,7 @@ public class UserRestController {
 
     @PostMapping
     @ApiOperation("Create user")
-    @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
+    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<User> create(
             @RequestBody UserDto userDto,
             HttpServletRequest request
