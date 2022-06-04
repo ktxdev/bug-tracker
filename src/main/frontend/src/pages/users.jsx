@@ -1,7 +1,7 @@
 import { Delete, NoteAlt, Visibility } from '@mui/icons-material';
 import { Box, Button, Divider, IconButton, Paper, Table, TableContainer, TableHead, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { useEffect, useState } from 'react'
-import { createUser, getAllUsers, updateUser } from '../api/users-api';
+import { createUser, deleteUser, getAllUsers, updateUser } from '../api/users-api';
 import { useAuth } from '../auth/auth';
 import NoContent from '../components/no-content';
 import UserDetails from '../components/user-details';
@@ -51,10 +51,29 @@ const Users = () => {
 
   const { setFeedback } = useAlert();
 
+  const onEdit = async (id) => {
+    const userToEdit = users.filter(user => user.id === id)[0];
+    setUser(userToEdit);
+    setIsEdit(true);
+    toggleModal();
+  }
+
+  const onDelete = async (id) => {
+    const response = await deleteUser(id, accessToken);
+    const data = response.data;
+    if(response.success) {
+      const updatedUsers = users.filter(u => u.id !== id);
+      setUsers(updatedUsers);
+      setFeedback({ open: true, severity: 'success', title: 'User successfully deleted!' });
+    } else {
+      setFeedback({ open: true, severity: 'error', title: data.message });
+    }
+  }
+
   const saveUser = async () => {
     const response = isEdit ? await updateUser(user.id, user, accessToken) : await createUser(user, accessToken);
     const data = response.data;
-    console.log(user);
+    
     if(response.success) {
       const updatedUsers = isEdit ? users.map(u => {
         if(u.id === user.id) return data;
@@ -131,11 +150,11 @@ const Users = () => {
                               COLUMNS.map(column => {
                                 if (column.id === 'actions') {
                                   return (<TableCell key={column.id}>
-                                    <IconButton color="primary" size="small" sx={{ mx: 1 }} >
+                                    <IconButton onClick={() => onEdit(user.id)} color="primary" size="small" sx={{ mx: 1 }} >
                                       <NoteAlt />
                                     </IconButton>
                                     <IconButton color="error" size="small" >
-                                      <Delete />
+                                      <Delete onClick={() => onDelete(user.id)} />
                                     </IconButton>
                                   </TableCell>)
                                 }

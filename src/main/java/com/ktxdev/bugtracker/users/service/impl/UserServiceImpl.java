@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 
-import static com.ktxdev.bugtracker.users.model.UserRole.*;
-import static java.util.Objects.isNull;
+import static com.ktxdev.bugtracker.users.model.UserRole.USER;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.StringUtils.hasText;
 @Slf4j(topic = "Users Service")

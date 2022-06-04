@@ -19,3 +19,9 @@ export const updateUser = async (id, user, accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await put(`${BASE_URL}/${id}`, user, headers);
 }
+
+export const deleteUser = async (id, accessToken) => {
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await remove(`${BASE_URL}/${id}`, headers);
+
+}
