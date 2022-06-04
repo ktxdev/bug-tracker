@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App';
 import { AuthProvider, RequireAuth } from './auth/auth';
@@ -14,7 +14,9 @@ import Tickets from './pages/tickets';
 import Users from './pages/users';
 import AlertProvider from './utils/AlertContext';
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+root.render(
   <BrowserRouter>
     <AlertProvider>
       <AuthProvider>
@@ -33,6 +35,5 @@ ReactDOM.render(
         </Routes>
       </AuthProvider>
     </AlertProvider>
-  </BrowserRouter>,
-  document.getElementById('root')
+  </BrowserRouter>
 );

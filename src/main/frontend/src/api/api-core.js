@@ -8,21 +8,24 @@ const API = axios.create({
 });
 
 const post = async (url, request = null, headers = null) => {
-    return await API.post(url, JSON.stringify(request), { headers: headers })
-        .then(res => {
-            return { success: true, data: res.data }
-        }).catch(err => {
-            return { success: false, data: err.response.data }
-        });
+    return resolve(API.post(url, JSON.stringify(request), { headers: headers }));
 }
 
 const get = async (url, headers = null) => {
-    return await API.get(url, { headers: headers })
-        .then(res => {
+    return resolve(API.get(url, { headers: headers }));
+    
+}
+
+const remove = async(url, headers = null) => {
+    return resolve(API.delete(url, { headers: headers }));
+}
+
+const resolve = (promise) => {
+    return promise.then(res => {
             return { success: true, data: res.data }
         }).catch(err => {
             return { success: false, data: err.response.data }
         });
 }
 
-export { post, get };
+export { post, get, remove };

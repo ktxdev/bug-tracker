@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import ProjectDetails from "../components/projects/ProjectDetails";
-import { createProject, getAllProjects } from "../api/projects-api";
+import { createProject, deleteProject, getAllProjects } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
 import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
@@ -54,7 +54,7 @@ const Projects = () => {
     }
 
     getProjects();
-  }, [projects])
+  }, [])
 
   const saveProject = async () => {
     const response = await createProject(project, accessToken);
@@ -71,6 +71,29 @@ const Projects = () => {
       toggleModal();
 
       setProjects([...projects, data])
+    } else {
+      setFeedback({
+        open: true,
+        severity: 'error',
+        title: data.message
+      })
+    }
+  }
+
+  const removeProject = async (id) => {
+    const response = await deleteProject(id, accessToken);
+    const data = response.data;
+
+    if (response.success) {
+      console.log(data);
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: 'Project successfully deleted!'
+      })
+      
+      const newProjects = projects.filter(project => project.id !== id);
+      setProjects(newProjects);
     } else {
       setFeedback({
         open: true,
@@ -144,7 +167,7 @@ const Projects = () => {
                                 <IconButton color="primary" size="small" sx={{ mx: 1 }} >
                                   <NoteAlt />
                                 </IconButton>
-                                <IconButton color="error" size="small" >
+                                <IconButton onClick={() => removeProject(project.id)} color="error" size="small" >
                                   <Delete />
                                 </IconButton>
                             </TableCell>)

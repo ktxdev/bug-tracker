@@ -1,13 +1,21 @@
-import { get, post } from "./api-core"
+import { get, post, remove } from "./api-core"
 
-const baseUrl = '/v1/projects'
+const BASE_URL = 'v1/projects'
+
+const AUTHORIZATION_HEADER = 'Authorization'
+const TOKEN_PREFIX = 'Bearer'
 
 export const createProject = async (project, accessToken) => {
-    const headers = { 'Authorization': `Bearer ${accessToken}` }
-    return await post(baseUrl, project, headers);
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await post(BASE_URL, project, headers);
 }
 
 export const getAllProjects = async(accessToken) => {
-    const headers = { 'Authorization': `Bearer ${accessToken}` }
-    return await get(baseUrl, headers)
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await get(BASE_URL, headers)
+}
+
+export const deleteProject = async(id, accessToken) => {
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await remove(`${BASE_URL}/${id}`, headers);
 }
