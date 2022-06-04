@@ -8,16 +8,20 @@ const API = axios.create({
 });
 
 const post = async (url, request = null, headers = null) => {
-    return resolve(API.post(url, JSON.stringify(request), { headers: headers }));
+    return resolve(API.post(url, JSON.stringify(request), { headers }));
 }
 
 const get = async (url, headers = null) => {
-    return resolve(API.get(url, { headers: headers }));
+    return resolve(API.get(url, { headers }));
     
 }
 
 const remove = async(url, headers = null) => {
-    return resolve(API.delete(url, { headers: headers }));
+    return resolve(API.delete(url, { headers }));
+}
+
+const put = async(url, request, headers = null) => {
+    return resolve(API.put(url, JSON.stringify(request), { headers }));
 }
 
 const resolve = (promise) => {
@@ -28,4 +32,4 @@ const resolve = (promise) => {
         });
 }
 
-export { post, get, remove };
+export { post, get, remove, put };

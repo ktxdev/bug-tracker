@@ -1,4 +1,4 @@
-import { get, post, remove } from "./api-core"
+import { get, post, put, remove } from "./api-core"
 
 const BASE_URL = 'v1/projects'
 
@@ -13,6 +13,11 @@ export const createProject = async (project, accessToken) => {
 export const getAllProjects = async(accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await get(BASE_URL, headers)
+}
+
+export const updateProject = async(id, project, accessToken) => {
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await put(`${BASE_URL}/${id}`, project, headers);
 }
 
 export const deleteProject = async(id, accessToken) => {

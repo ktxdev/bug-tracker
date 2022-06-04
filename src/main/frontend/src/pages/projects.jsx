@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import ProjectDetails from "../components/projects/ProjectDetails";
-import { createProject, deleteProject, getAllProjects } from "../api/projects-api";
+import { createProject, deleteProject, getAllProjects, updateProject } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
 import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
@@ -56,28 +56,73 @@ const Projects = () => {
     getProjects();
   }, [])
 
+  const [isEdit, setIsEdit] = useState(false)
+
   const saveProject = async () => {
-    const response = await createProject(project, accessToken);
-    const data = response.data;
+    if(isEdit) {
+      editProject((res) => {
+        if (res.success) {
+          setFeedback({
+            open: true,
+            severity: 'success',
+            title: 'Project successfully updated!'
+          })
 
-    if (response.success) {
-      console.log(data);
-      setFeedback({
-        open: true,
-        severity: 'success',
-        title: 'Project successfully created!'
-      })
-      setProject(initProjectState)
-      toggleModal();
-
-      setProjects([...projects, data])
+          const updatedProjects = projects.map(p => {
+            if(p.id !== project.id) return p;
+            return res.data;
+          })
+    
+          setIsEdit(false)
+          setProjects(updatedProjects)
+          setProject(initProjectState)
+          toggleModal();
+        } else {
+          setFeedback({
+            open: true,
+            severity: 'error',
+            title: res.data.message
+          })
+        }
+      });
     } else {
-      setFeedback({
-        open: true,
-        severity: 'error',
-        title: data.message
-      })
+      addProject((res) => {
+        if (res.success) {
+          setFeedback({
+            open: true,
+            severity: 'success',
+            title: 'Project successfully created!'
+          })
+    
+          setProjects([...projects, res.data])
+          setProject(initProjectState)
+          toggleModal();
+        } else {
+          setFeedback({
+            open: true,
+            severity: 'error',
+            title: res.data.message
+          })
+        }
+      });
     }
+  }
+
+  const handleEditButtonClick = (id) => {
+    setIsEdit(true);
+    const projectToEdit = projects.filter(project => project.id === id)[0];
+    setProject(projectToEdit);
+    toggleModal();
+  }
+
+  const editProject = async(callback) => {
+    const response = await updateProject(project.id, project, accessToken);
+    callback(response);
+  }
+
+  const addProject = async(callback) => {
+    const response = await createProject(project, accessToken);
+    callback(response)
   }
 
   const removeProject = async (id) => {
@@ -85,7 +130,6 @@ const Projects = () => {
     const data = response.data;
 
     if (response.success) {
-      console.log(data);
       setFeedback({
         open: true,
         severity: 'success',
@@ -164,7 +208,7 @@ const Projects = () => {
                                 <IconButton color="success" size="small" >
                                   <Visibility />
                                 </IconButton>
-                                <IconButton color="primary" size="small" sx={{ mx: 1 }} >
+                                <IconButton onClick={() => handleEditButtonClick(project.id)} color="primary" size="small" sx={{ mx: 1 }} >
                                   <NoteAlt />
                                 </IconButton>
                                 <IconButton onClick={() => removeProject(project.id)} color="error" size="small" >
