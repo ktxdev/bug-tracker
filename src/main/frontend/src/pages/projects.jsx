@@ -6,6 +6,7 @@ import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
 import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
 import { useSpinner } from "../utils/SpinnerContext";
+import NoContent from "../components/no-content";
 
 
 const columns = [
@@ -187,64 +188,67 @@ const Projects = () => {
           setProject={setProject}
           onSave={saveProject} />
 
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer>
-            <Table>
-              <TableHead >
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {
-                  projects.map(project => {
-                    return (
-                      <TableRow key={project.id}>
-                        {
-                          columns.map(column => {
-                            if (column.id === 'actions') {
-                              return (<TableCell
-                                key={column.id}>
-                                <IconButton color="success" size="small" >
-                                  <Visibility />
-                                </IconButton>
-                                <IconButton onClick={() => handleEditButtonClick(project.id)} color="primary" size="small" sx={{ mx: 1 }} >
-                                  <NoteAlt />
-                                </IconButton>
-                                <IconButton onClick={() => removeProject(project.id)} color="error" size="small" >
-                                  <Delete />
-                                </IconButton>
-                              </TableCell>)
-                            }
+        {
+          projects.length === 0 ? <NoContent message="There are no projects. You can add one by clicking the 'New Project' button." />
+            : <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+              <TableContainer>
+                <Table>
+                  <TableHead >
+                    <TableRow>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ minWidth: column.minWidth }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {
+                      projects.map(project => {
+                        return (
+                          <TableRow key={project.id}>
+                            {
+                              columns.map(column => {
+                                if (column.id === 'actions') {
+                                  return (<TableCell
+                                    key={column.id}>
+                                    <IconButton color="success" size="small" >
+                                      <Visibility />
+                                    </IconButton>
+                                    <IconButton onClick={() => handleEditButtonClick(project.id)} color="primary" size="small" sx={{ mx: 1 }} >
+                                      <NoteAlt />
+                                    </IconButton>
+                                    <IconButton onClick={() => removeProject(project.id)} color="error" size="small" >
+                                      <Delete />
+                                    </IconButton>
+                                  </TableCell>)
+                                }
 
-                            const value = project[column.id];
-                            return (<TableCell key={column.id} align={column.align}
-                              style={{ minWidth: column.minWidth }}>
-                              {
-                                value !== null && typeof value === 'object' ?
-                                  <AvatarGroup max={4} sx={{ width: 'max-content' }} >
-                                    {value.map(v => <Avatar>{getName(v.name)}</Avatar>)}
-                                  </AvatarGroup> : value
-                              }
-                            </TableCell>)
-                          })
-                        }
-                      </TableRow>
-                    )
-                  })
-                }
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+                                const value = project[column.id];
+                                return (<TableCell key={column.id} align={column.align}
+                                  style={{ minWidth: column.minWidth }}>
+                                  {
+                                    value !== null && typeof value === 'object' ?
+                                      <AvatarGroup max={4} sx={{ width: 'max-content' }} >
+                                        {value.map(v => <Avatar>{getName(v.name)}</Avatar>)}
+                                      </AvatarGroup> : value
+                                  }
+                                </TableCell>)
+                              })
+                            }
+                          </TableRow>
+                        )
+                      })
+                    }
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+        }
       </Box>}
     </>
   )
