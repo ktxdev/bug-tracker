@@ -23,7 +23,7 @@ root.render(
         <Routes>
           <Route path='/' element={<App />} >
             <Route path='/' element={<RequireAuth><Layout /></RequireAuth>}>
-              <Route index element={<Dashboard/>}/>
+              <Route index element={<Dashboard />} />
               <Route path='/tickets' element={<Tickets />} />
               <Route path='/projects' element={<Projects />} />
               <Route path='/users' element={<Users />} />

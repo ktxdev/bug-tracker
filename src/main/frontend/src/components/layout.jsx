@@ -7,10 +7,11 @@ import { theme } from '../theme/index.js'
 import { Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/auth'
 import { get } from '../api/api-core'
+import SpinnerProvider from '../utils/SpinnerContext'
 
 const Layout = () => {
 
-  const { auth,  setProfile } = useAuth();
+  const { auth, setProfile } = useAuth();
 
   useEffect(() => {
     getProfile()
@@ -52,9 +53,9 @@ const Layout = () => {
           }}
         >
           <Toolbar />
-          <Container maxWidth="2xl" sx={{ mt: 4, mb: 4 }}>
+          <SpinnerProvider>
             <Outlet />
-          </Container>
+          </SpinnerProvider>
         </Box>
       </Box>
     </ThemeProvider>
