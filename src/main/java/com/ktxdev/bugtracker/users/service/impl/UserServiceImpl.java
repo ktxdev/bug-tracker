@@ -10,6 +10,7 @@ import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,12 @@ import static org.springframework.util.StringUtils.hasText;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    @Value("${system.defaults.users.admin.email}")
+    private String adminEmail;
+
+    @Value("${system.defaults.users.user.email}")
+    private String userEmail;
 
     private final UserDao userDao;
 
@@ -54,9 +61,6 @@ public class UserServiceImpl implements UserService {
         if (nonNull(updateDto.getLastName()))
             user.setLastName(updateDto.getLastName());
 
-//        if (nonNull(updateDto.getRole()))
-//            user.setRole(updateDto.getRole());
-
         if (nonNull(updateDto.getPassword()) && updateDto.getPassword().equals(updateDto.getConfirmPassword())) {
                 user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
         } else {
@@ -74,6 +78,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllUser(Pageable pageable, String searchQuery) {
         return userDao.findAll(pageable);
+    }
+
+    @Override
+    public User findUserById(long id) {
+        return userDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d not found", id)));
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
+    }
+
+    @Override
+    public void deleteUser(long id) {
+        val user = findUserById(id);
+        String email = user.getEmail();
+        if (email.equals(adminEmail) || email.equals(userEmail))
+            throw new InvalidRequestException("Cannot delete default user(s)");
+        userDao.delete(user);
     }
 
     private User validateAndBuild(UserDto createDto) {
@@ -99,17 +124,5 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(createDto.getPassword()))
                 .role(role)
                 .build();
-    }
-
-    @Override
-    public User findUserById(long id) {
-        return userDao.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d not found", id)));
-    }
-
-    @Override
-    public User findByEmail(String email) {
-        return userDao.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with email %s not found", email)));
     }
 }

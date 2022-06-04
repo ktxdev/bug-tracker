@@ -21,4 +21,6 @@ public interface UserService {
     User profile(Principal principal);
 
     Page<User> getAllUser(Pageable pageable, String searchQuery);
+
+    void deleteUser(long id);
 }

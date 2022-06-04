@@ -81,4 +81,13 @@ public class UserRestController {
     ) {
         return ResponseEntity.ok(userService.getAllUser(pageable, q));
     }
+
+    @DeleteMapping("{userId}")
+    @ApiOperation("Delete user by id")
+    public ResponseEntity<?> deleteUser(
+            @PathVariable long userId
+    ) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
 }
