@@ -21,15 +21,15 @@ import java.security.Principal;
 
 @RestController
 @Api(tags = "Users")
-@RequestMapping("api")
+@RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 @Slf4j(topic = "User Rest Controller")
 public class UserRestController {
 
     private final UserService userService;
 
+    @PostMapping
     @ApiOperation("Create user")
-    @PostMapping("v1/users")
     @PreAuthorize("hasRole(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<User> create(
             @RequestBody UserDto userDto,
@@ -42,8 +42,8 @@ public class UserRestController {
                 .body(userService.create(userDto));
     }
 
+    @PostMapping("sign-up")
     @ApiOperation("User sign up")
-    @PostMapping("opn/v1/users/sign-up")
     public ResponseEntity<User> register(
             @RequestBody UserDto userDto,
             HttpServletRequest request
@@ -55,8 +55,8 @@ public class UserRestController {
                 .body(userService.register(userDto));
     }
 
+    @PutMapping("{userId}")
     @ApiOperation("Update user")
-    @PutMapping("v1/users/{userId}")
     public ResponseEntity<User> update(
             @RequestBody UserDto userDto,
             @PathVariable long userId
@@ -65,15 +65,15 @@ public class UserRestController {
         return ResponseEntity.ok(userService.update(userDto));
     }
 
+    @GetMapping("my-profile")
     @ApiOperation("Get logged in user profile")
-    @GetMapping("v1/users/profile")
     public ResponseEntity<User> profile(
             Principal principal
     ) {
         return ResponseEntity.ok(userService.profile(principal));
     }
 
-    @GetMapping("v1/users")
+    @GetMapping
     @ApiOperation("Get all users")
     public ResponseEntity<Page<User>> getAllUser(
             @PageableDefault(sort = "lastName") Pageable pageable,

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "Authentication")
-@RequestMapping("api/opn/v1/authenticate")
+@RequestMapping("api/v1/authenticate")
 public class AuthenticationRestController {
 
     private final AuthenticationService authenticationService;
