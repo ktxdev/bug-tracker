@@ -1,6 +1,8 @@
 package com.ktxdev.bugtracker.users.api;
 
 import com.ktxdev.bugtracker.users.dto.UserDto;
+import com.ktxdev.bugtracker.users.dto.UserPasswordUpdateDto;
+import com.ktxdev.bugtracker.users.dto.UserUpdateDto;
 import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.service.UserService;
 import io.swagger.annotations.Api;
@@ -58,11 +60,21 @@ public class UserRestController {
     @PutMapping("{userId}")
     @ApiOperation("Update user")
     public ResponseEntity<User> update(
-            @RequestBody UserDto userDto,
+            @RequestBody UserUpdateDto userDto,
             @PathVariable long userId
     ) {
         userDto.setId(userId);
         return ResponseEntity.ok(userService.update(userDto));
+    }
+
+    @PutMapping("{userId}/change-password")
+    @ApiOperation("Change user password")
+    public ResponseEntity<User> updatePassword(
+            @RequestBody UserPasswordUpdateDto updateDto,
+            @PathVariable long userId
+    ) {
+        updateDto.setId(userId);
+        return ResponseEntity.ok(userService.updatePassword(updateDto));
     }
 
     @GetMapping("my-profile")

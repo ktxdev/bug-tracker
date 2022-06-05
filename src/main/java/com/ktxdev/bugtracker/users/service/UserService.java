@@ -1,6 +1,8 @@
 package com.ktxdev.bugtracker.users.service;
 
 import com.ktxdev.bugtracker.users.dto.UserDto;
+import com.ktxdev.bugtracker.users.dto.UserPasswordUpdateDto;
+import com.ktxdev.bugtracker.users.dto.UserUpdateDto;
 import com.ktxdev.bugtracker.users.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +18,9 @@ public interface UserService {
 
     User register(UserDto command);
 
-    User update(UserDto updateDto);
+    User update(UserUpdateDto updateDto);
+
+    User updatePassword(UserPasswordUpdateDto passwordUpdateDto);
 
     User profile(Principal principal);
 

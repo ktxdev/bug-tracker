@@ -4,6 +4,8 @@ import com.ktxdev.bugtracker.exception.InvalidRequestException;
 import com.ktxdev.bugtracker.exception.ResourceNotFoundException;
 import com.ktxdev.bugtracker.users.dao.UserDao;
 import com.ktxdev.bugtracker.users.dto.UserDto;
+import com.ktxdev.bugtracker.users.dto.UserPasswordUpdateDto;
+import com.ktxdev.bugtracker.users.dto.UserUpdateDto;
 import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.model.UserRole;
 import com.ktxdev.bugtracker.users.service.UserService;
@@ -51,17 +53,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(UserDto updateDto) {
+    public User update(UserUpdateDto updateDto) {
+        val user = findUserById(updateDto.getId());
+        user.setFirstName(updateDto.getFirstName());
+        user.setLastName(updateDto.getLastName());
+
+        return userDao.save(user);
+    }
+
+    @Override
+    public User updatePassword(UserPasswordUpdateDto updateDto) {
         val user = findUserById(updateDto.getId());
 
-        if (nonNull(updateDto.getFirstName()))
-            user.setFirstName(updateDto.getFirstName());
-
-        if (nonNull(updateDto.getLastName()))
-            user.setLastName(updateDto.getLastName());
-
         if (nonNull(updateDto.getPassword()) && updateDto.getPassword().equals(updateDto.getConfirmPassword())) {
-                user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
+            user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
         } else {
             throw new InvalidRequestException("Passwords do not match");
         }
