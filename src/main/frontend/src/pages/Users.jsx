@@ -1,10 +1,12 @@
 import { Delete, NoteAlt, Visibility } from '@mui/icons-material';
-import { Box, Button, Divider, IconButton, Paper, Table, TableContainer, TableHead, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { Box, Button, Divider, IconButton, Paper, Table, TableContainer, TableHead, TableBody, TableCell, TableRow, Typography, TableFooter, TablePagination } from '@mui/material';
 import { useEffect, useState } from 'react'
 import { createUser, deleteUser, getAllUsers, updateUser } from '../api/users-api';
 import { useAuth } from '../auth/auth';
-import NoContent from '../components/no-content';
-import UserDetails from '../components/user-details';
+import NoContent from '../components/NoContent';
+import PaginatedTable from '../components/PaginatedTable';
+import TablePaginationActions from '../components/TablePaginationActions';
+import UserDetails from '../components/UserDetails';
 import { useAlert } from '../utils/AlertContext';
 import { useSpinner } from '../utils/SpinnerContext';
 
@@ -16,6 +18,10 @@ const Users = () => {
     { id: 'email', label: 'Email', minWidth: 170, align: 'left' },
     { id: 'actions', label: '', minWidth: 170, align: 'left' },
   ];
+
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   const { loading, showLoader, hideLoader } = useSpinner();
 
@@ -29,16 +35,28 @@ const Users = () => {
 
   useEffect(() => {
     showLoader();
-    const fetchUsers = async () => {
-      const response = await getAllUsers(accessToken);
-      if (response.success) {
-        setUsers(response.data.content);
-      }
+    const fetch = async () => {
+      await fetchUsers(page, rowsPerPage);
       hideLoader();
     }
-
-    fetchUsers();
+    
+    fetch();
   }, [])
+
+  const fetchUsers = async (newPage, size) => {
+
+    const response = await getAllUsers(newPage, size, accessToken);
+    if (response.success) {
+      const data = response.data;
+
+      setTotalCount(data.totalElements)
+      setPage(data.number)
+      setRowsPerPage(data.size)
+      setUsers(data.content);
+    } else {
+      setFeedback({ open: true, severity: 'error', title: 'Failed to retrieve users' });
+    }
+  }
 
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -61,7 +79,7 @@ const Users = () => {
   const onDelete = async (id) => {
     const response = await deleteUser(id, accessToken);
     const data = response.data;
-    if(response.success) {
+    if (response.success) {
       const updatedUsers = users.filter(u => u.id !== id);
       setUsers(updatedUsers);
       setFeedback({ open: true, severity: 'success', title: 'User successfully deleted!' });
@@ -73,26 +91,39 @@ const Users = () => {
   const saveUser = async () => {
     const response = isEdit ? await updateUser(user.id, user, accessToken) : await createUser(user, accessToken);
     const data = response.data;
-    
-    if(response.success) {
+
+    if (response.success) {
       const updatedUsers = isEdit ? users.map(u => {
-        if(u.id === user.id) return data;
+        if (u.id === user.id) return data;
         return u;
       }) : [...users, data];
 
       setUsers(updatedUsers);
 
-      setFeedback({ 
-        open: true, 
-        severity: 'success', 
-        title: `User successfully ${isEdit ? 'updated': 'created'}!`});
-      
-        toggleModal();
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: `User successfully ${isEdit ? 'updated' : 'created'}!`
+      });
+
+      toggleModal();
       setIsEdit(false);
       setUser(initUser);
     } else {
       setFeedback({ open: true, severity: 'error', title: data.message });
     }
+  }
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+    fetchUsers(newPage, rowsPerPage);
+  }
+
+  const handleRowsPerPageChange = (event) => {
+    const size = event.target.value;
+    setRowsPerPage(size);
+    setPage(0);
+    fetchUsers(0, size);
   }
 
   return (
@@ -125,54 +156,9 @@ const Users = () => {
 
         {
           users.length === 0 ? <NoContent message="There are no users. You can add one by clicking the 'New User' button." />
-            : <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-              <TableContainer>
-                <Table>
-                  <TableHead >
-                    <TableRow>
-                      {COLUMNS.map((column) => (
-                        <TableCell
-                          key={column.id}
-                          align={column.align}
-                          style={{ minWidth: column.minWidth }}
-                        >
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {
-                      users.map(user => {
-                        return (
-                          <TableRow key={user.id}>
-                            {
-                              COLUMNS.map(column => {
-                                if (column.id === 'actions') {
-                                  return (<TableCell key={column.id}>
-                                    <IconButton onClick={() => onEdit(user.id)} color="primary" size="small" sx={{ mx: 1 }} >
-                                      <NoteAlt />
-                                    </IconButton>
-                                    <IconButton onClick={() => onDelete(user.id)} color="error" size="small" >
-                                      <Delete />
-                                    </IconButton>
-                                  </TableCell>)
-                                }
-
-                                const value = user[column.id];
-                                return (<TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-                                  {value === null ? "---" : value}
-                                </TableCell>)
-                              })
-                            }
-                          </TableRow>
-                        )
-                      })
-                    }
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+            : <PaginatedTable columns={COLUMNS} data={users} count={totalCount} 
+              page={page} rowsPerPage={rowsPerPage} onEditAction={onEdit}
+              onDeleteAction={onDelete} handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
         }
       </Box>}
     </>

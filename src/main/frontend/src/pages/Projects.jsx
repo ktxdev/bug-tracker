@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import ProjectDetails from "../components/projects/ProjectDetails";
+import ProjectDetails from "../components/ProjectDetails";
 import { createProject, deleteProject, getAllProjects, updateProject } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
 import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
 import { useSpinner } from "../utils/SpinnerContext";
-import NoContent from "../components/no-content";
+import NoContent from "../components/NoContent";
 
 
 const columns = [

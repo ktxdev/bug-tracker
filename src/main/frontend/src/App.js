@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Feedback from './components/feedback';
+import Feedback from './components/Feedback';
 import { useAlert } from './utils/AlertContext';
 
 const App = () => {

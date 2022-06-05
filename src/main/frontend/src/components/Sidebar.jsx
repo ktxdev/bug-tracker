@@ -1,5 +1,5 @@
 import React from 'react'
-import NavItem from "./nav-item";
+import NavItem from "./NavItem";
 import MuiDrawer from '@mui/material/Drawer';
 import { AccountCircle, Assignment, BarChart, ChevronLeft, ConfirmationNumber, Group } from "@mui/icons-material";
 import { Divider, IconButton, List, styled, Toolbar } from '@mui/material';
