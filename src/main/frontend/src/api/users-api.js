@@ -29,3 +29,8 @@ export const getMyProfile = async(accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await get('/v1/users/my-profile', headers);
 }
+
+export const changePassword = async(request, accessToken) => {
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await put('/v1/users/change-password', request, headers);
+}

@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Container, Divider, TextField, Typography } from '@mui/material';
 import { width } from '@mui/system';
 import { useEffect, useState } from 'react'
-import { getMyProfile, updateUser } from '../api/users-api';
+import { changePassword, getMyProfile, updateUser } from '../api/users-api';
 import { useAuth } from '../auth/auth';
 import { useAlert } from '../utils/AlertContext';
 
@@ -69,20 +69,37 @@ const Account = () => {
     }
   }
 
-  const [newPassword, setNewPassword] = useState({ password: '', confirmPassword: ''})
+  const initNewPassword = { password: '', confirmPassword: ''}
+  const [newPassword, setNewPassword] = useState(initNewPassword)
   
   const handleNewPasswordInputChange = (e) => {
     const { name, value } = e.target;
     setNewPassword({ ...newPassword, [name]: value });
   }
 
-  const handleNewPasswordSubmit = (e) => {
+  const handleNewPasswordSubmit = async (e) => {
     e.preventDefault();
 
     if(newPassword.password !== newPassword.confirmPassword) {
       setFeedback({open: true, severity: 'error', title: 'Passwords do not match'})
     }
 
+    const response = await changePassword(newPassword, accessToken);
+
+    if(response.success) {
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: 'Password successfully updated!'     
+      })
+      setNewPassword(initNewPassword)
+    } else {
+      setFeedback({
+        open: true,
+        severity: 'error',
+        title: response.data.message || 'Failed to update password!'     
+      })
+    }
   }
 
   return (
