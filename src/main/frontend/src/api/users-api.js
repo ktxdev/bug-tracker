@@ -23,5 +23,9 @@ export const updateUser = async (id, user, accessToken) => {
 export const deleteUser = async (id, accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await remove(`${BASE_URL}/${id}`, headers);
+}
 
+export const getMyProfile = async(accessToken) => {
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await get('/v1/users/my-profile', headers);
 }

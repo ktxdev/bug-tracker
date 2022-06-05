@@ -29,7 +29,7 @@ const items = [
     {
         href: '/account',
         icon: (<AccountCircle fontSize="small" />),
-        title: 'Account'
+        title: 'My Account'
     },
 ];
 

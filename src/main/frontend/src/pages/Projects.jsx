@@ -193,9 +193,7 @@ const Projects = () => {
           Projects
         </Typography>
 
-        <Divider sx={{
-          my: 1
-        }} />
+        <Divider sx={{ my: 1}} />
 
         <Box sx={{ py: 1, display: 'flex', justifyContent: 'flex-end' }} >
           <Button
