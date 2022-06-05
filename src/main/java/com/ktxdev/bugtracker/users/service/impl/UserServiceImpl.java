@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updatePassword(UserPasswordUpdateDto updateDto) {
-        val user = findUserById(updateDto.getId());
+        val user = findByEmail(updateDto.getPrincipal().getName());
 
         if (nonNull(updateDto.getPassword()) && updateDto.getPassword().equals(updateDto.getConfirmPassword())) {
             user.setPassword(passwordEncoder.encode(updateDto.getPassword()));

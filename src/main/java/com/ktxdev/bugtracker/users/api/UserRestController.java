@@ -67,13 +67,13 @@ public class UserRestController {
         return ResponseEntity.ok(userService.update(userDto));
     }
 
-    @PutMapping("{userId}/change-password")
+    @PutMapping("change-password")
     @ApiOperation("Change user password")
     public ResponseEntity<User> updatePassword(
             @RequestBody UserPasswordUpdateDto updateDto,
-            @PathVariable long userId
+            Principal principal
     ) {
-        updateDto.setId(userId);
+        updateDto.setPrincipal(principal);
         return ResponseEntity.ok(userService.updatePassword(updateDto));
     }
 
