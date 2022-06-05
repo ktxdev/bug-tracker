@@ -3,7 +3,7 @@ import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableFo
 import React from 'react'
 import TablePaginationActions from './TablePaginationActions'
 
-const PaginatedTable = ({ columns, data, count, page, rowsPerPage, onEditAction, onDeleteAction, handlePageChange, handleRowsPerPageChange }) => {
+const PaginatedTable = ({ columns, data, count, page, rowsPerPage, handlePageChange, handleRowsPerPageChange }) => {
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer>
@@ -30,12 +30,11 @@ const PaginatedTable = ({ columns, data, count, page, rowsPerPage, onEditAction,
                                             columns.map(column => {
                                                 if (column.id === 'actions') {
                                                     return (<TableCell key={column.id}>
-                                                        <IconButton onClick={() => onEditAction(dt.id)} color="primary" size="small" sx={{ mx: 1 }} >
-                                                            <NoteAlt />
-                                                        </IconButton>
-                                                        <IconButton onClick={() => onDeleteAction(dt.id)} color="error" size="small" >
-                                                            <Delete />
-                                                        </IconButton>
+                                                        {
+                                                            column.actions.map(action => (<IconButton key={action.id} onClick={() => action.onClick(dt.id)} color={action.color} size="small" sx={{ mx: 1 }} >
+                                                                {action.icon}
+                                                            </IconButton>))
+                                                        }
                                                     </TableCell>)
                                                 }
 

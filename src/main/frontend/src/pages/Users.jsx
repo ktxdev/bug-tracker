@@ -1,23 +1,15 @@
-import { Delete, NoteAlt, Visibility } from '@mui/icons-material';
-import { Box, Button, Divider, IconButton, Paper, Table, TableContainer, TableHead, TableBody, TableCell, TableRow, Typography, TableFooter, TablePagination } from '@mui/material';
+import { Delete, NoteAlt } from '@mui/icons-material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react'
 import { createUser, deleteUser, getAllUsers, updateUser } from '../api/users-api';
 import { useAuth } from '../auth/auth';
 import NoContent from '../components/NoContent';
 import PaginatedTable from '../components/PaginatedTable';
-import TablePaginationActions from '../components/TablePaginationActions';
 import UserDetails from '../components/UserDetails';
 import { useAlert } from '../utils/AlertContext';
 import { useSpinner } from '../utils/SpinnerContext';
 
 const Users = () => {
-
-  const COLUMNS = [
-    { id: 'firstName', label: 'First Name', minWidth: 170, align: 'left' },
-    { id: 'lastName', label: 'Last Name', minWidth: 100, align: 'left' },
-    { id: 'email', label: 'Email', minWidth: 170, align: 'left' },
-    { id: 'actions', label: '', minWidth: 170, align: 'left' },
-  ];
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
@@ -126,6 +118,17 @@ const Users = () => {
     fetchUsers(0, size);
   }
 
+
+  const COLUMNS = [
+    { id: 'firstName', label: 'First Name', minWidth: 170, align: 'left' },
+    { id: 'lastName', label: 'Last Name', minWidth: 100, align: 'left' },
+    { id: 'email', label: 'Email', minWidth: 170, align: 'left' },
+    { id: 'actions', label: '', minWidth: 170, align: 'left', actions: [
+      { id: 'edit-user', icon: <NoteAlt/>, color: 'primary', onClick: onEdit },
+      { id: 'delete-user', icon: <Delete />, color: 'error', onClick: onDelete }
+    ] },
+  ];
+
   return (
     <>
       {!loading && <Box sx={{ mx: 4, my: 2 }}>
@@ -157,8 +160,8 @@ const Users = () => {
         {
           users.length === 0 ? <NoContent message="There are no users. You can add one by clicking the 'New User' button." />
             : <PaginatedTable columns={COLUMNS} data={users} count={totalCount} 
-              page={page} rowsPerPage={rowsPerPage} onEditAction={onEdit}
-              onDeleteAction={onDelete} handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
+              page={page} rowsPerPage={rowsPerPage} 
+              handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
         }
       </Box>}
     </>

@@ -10,9 +10,9 @@ export const createProject = async (project, accessToken) => {
     return await post(BASE_URL, project, headers);
 }
 
-export const getAllProjects = async(accessToken) => {
+export const getAllProjects = async(page, size, accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
-    return await get(BASE_URL, headers)
+    return await get(`${BASE_URL}?page=${page}&size=${size}`, headers)
 }
 
 export const updateProject = async(id, project, accessToken) => {

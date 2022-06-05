@@ -7,14 +7,7 @@ import { useAlert } from "../utils/AlertContext";
 import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
 import { useSpinner } from "../utils/SpinnerContext";
 import NoContent from "../components/NoContent";
-
-
-const columns = [
-  { id: 'name', label: 'Name', minWidth: 170, align: 'left' },
-  { id: 'description', label: 'Description', minWidth: 100, align: 'left' },
-  { id: 'members', label: 'Members', minWidth: 170, align: 'left' },
-  { id: 'actions', label: '', minWidth: 170, align: 'left' },
-];
+import PaginatedTable from "../components/PaginatedTable";
 
 const Projects = () => {
 
@@ -22,10 +15,9 @@ const Projects = () => {
     document.title = 'Projects | Bug Tracker';
   }, []);
 
-  const getName = (name) => {
-    const names = name.split(' ');
-    return names[0][0] + names[1][0];
-  }
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -44,25 +36,33 @@ const Projects = () => {
   const { loading, showLoader, hideLoader } = useSpinner();
 
   useEffect(() => {
-    const getProjects = async () => {
+    const fetch = async () => {
       showLoader();
-
-      const response = await getAllProjects(accessToken);
-
-      if (response.success) {
-        setProjects(response.data.content);
-      } else {
-        setFeedback({
-          open: true,
-          severity: 'error',
-          title: 'Failed to load projects. Please refresh page.'
-        })
-      }
-
+      await fetchProjects(page, rowsPerPage);
       hideLoader();
     }
-    getProjects();
+
+    fetch();
   }, [])
+
+  const fetchProjects = async (page, size) => {
+    const response = await getAllProjects(page, size, accessToken);
+
+    if (response.success) {
+      const data = response.data;
+
+      setTotalCount(data.totalElements)
+      setPage(data.number)
+      setRowsPerPage(data.size)
+      setProjects(data.content);
+    } else {
+      setFeedback({
+        open: true,
+        severity: 'error',
+        title: 'Failed to load projects. Please refresh page.'
+      })
+    }
+  }
 
   const [isEdit, setIsEdit] = useState(false)
 
@@ -133,7 +133,24 @@ const Projects = () => {
     callback(response)
   }
 
-  const removeProject = async (id) => {
+  const onEdit = (id) => {
+    console.log(id);
+  }
+
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+    fetchProjects(newPage, rowsPerPage);
+  }
+
+  const handleRowsPerPageChange = (event) => {
+    const size = event.target.value;
+    setRowsPerPage(size);
+    setPage(0);
+    fetchProjects(0, size);
+  }
+
+  const onDelete = async (id) => {
     const response = await deleteProject(id, accessToken);
     const data = response.data;
 
@@ -147,13 +164,24 @@ const Projects = () => {
       const newProjects = projects.filter(project => project.id !== id);
       setProjects(newProjects);
     } else {
-      setFeedback({
-        open: true,
-        severity: 'error',
-        title: data.message
-      })
+      setFeedback({open: true, severity: 'error', title: data.message})
     }
   }
+
+
+  const showProjectDetails = (id) => {
+    console.log(id);
+  }
+
+  const COLUMNS = [
+    { id: 'name', label: 'Name', minWidth: 170, align: 'left' },
+    { id: 'description', label: 'Description', minWidth: 100, align: 'left' },
+    { id: 'members', label: 'Members', minWidth: 170, align: 'left' },
+    { id: 'actions', label: '', minWidth: 170, align: 'left', actions: [
+      { id: 'show-details', icon: <Visibility/>, color: 'primary', onClick: showProjectDetails },
+      { id: 'delete-project', icon: <Delete />, color: 'error', onClick: onDelete }
+    ]},
+  ];
 
   return (
     <>
@@ -190,64 +218,9 @@ const Projects = () => {
 
         {
           projects.length === 0 ? <NoContent message="There are no projects. You can add one by clicking the 'New Project' button." />
-            : <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-              <TableContainer>
-                <Table>
-                  <TableHead >
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell
-                          key={column.id}
-                          align={column.align}
-                          style={{ minWidth: column.minWidth }}
-                        >
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {
-                      projects.map(project => {
-                        return (
-                          <TableRow key={project.id}>
-                            {
-                              columns.map(column => {
-                                if (column.id === 'actions') {
-                                  return (<TableCell
-                                    key={column.id}>
-                                    <IconButton color="success" size="small" >
-                                      <Visibility />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleEditButtonClick(project.id)} color="primary" size="small" sx={{ mx: 1 }} >
-                                      <NoteAlt />
-                                    </IconButton>
-                                    <IconButton onClick={() => removeProject(project.id)} color="error" size="small" >
-                                      <Delete />
-                                    </IconButton>
-                                  </TableCell>)
-                                }
-
-                                const value = project[column.id];
-                                return (<TableCell key={column.id} align={column.align}
-                                  style={{ minWidth: column.minWidth }}>
-                                  {
-                                    value !== null && typeof value === 'object' ?
-                                      <AvatarGroup max={4} sx={{ width: 'max-content' }} >
-                                        {value.map(v => <Avatar>{getName(v.name)}</Avatar>)}
-                                      </AvatarGroup> : value
-                                  }
-                                </TableCell>)
-                              })
-                            }
-                          </TableRow>
-                        )
-                      })
-                    }
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+            : <PaginatedTable columns={COLUMNS} data={projects} count={totalCount}
+              page={page} rowsPerPage={rowsPerPage} 
+              handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
         }
       </Box>}
     </>
