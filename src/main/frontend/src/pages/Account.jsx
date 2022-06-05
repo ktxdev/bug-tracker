@@ -1,8 +1,9 @@
 import { Avatar, Box, Button, Container, Divider, TextField, Typography } from '@mui/material';
 import { width } from '@mui/system';
 import { useEffect, useState } from 'react'
-import { getMyProfile } from '../api/users-api';
+import { getMyProfile, updateUser } from '../api/users-api';
 import { useAuth } from '../auth/auth';
+import { useAlert } from '../utils/AlertContext';
 
 const Account = () => {
 
@@ -12,7 +13,8 @@ const Account = () => {
 
   const { auth } = useAuth();
 
-  const [profile, setProfile] = useState(auth.profile);
+  const initProfile = {firstName: '', lastName: '', email: ''}
+  const [profile, setProfile] = useState(auth.profile || initProfile);
 
   useEffect(() => {
     fetchMyProfile();
@@ -21,8 +23,66 @@ const Account = () => {
   const fetchMyProfile = async () => {
     const response = await getMyProfile(auth.accessToken);
     if (response.success) {
-      setProfile(response.data);
+      const data = response.data;
+      setProfile(data);
+      setUserDetails({firstName: data.firstName || '', lastName: data.lastName || ''})
     }
+  }
+
+  const { setFeedback } = useAlert();
+
+  const { auth: { accessToken } } = useAuth();
+
+  const [hasChanges, setHasChanges] = useState(false)
+
+  const [userDetails, setUserDetails] = useState({ firstName: '', lastName: '' })
+
+  const handleUserDetailsSubmit = async (e) => {
+    e.preventDefault();
+    
+    const updatedUser = {...profile, ...userDetails};
+
+    const response = await updateUser(profile.id, updatedUser, accessToken);
+
+    if(response.success) {
+      setProfile(response.data)
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: 'Account details updated!'     
+      })
+    } else {
+      setFeedback({
+        open: true,
+        severity: 'error',
+        title: response.data.message || 'Failed to update user details'     
+      })
+    }
+  }
+
+  const handleUserDetailsInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserDetails({ ...userDetails, [name]: value });
+    
+    if(value !== profile[name]) {
+      setHasChanges(true)
+    }
+  }
+
+  const [newPassword, setNewPassword] = useState({ password: '', confirmPassword: ''})
+  
+  const handleNewPasswordInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPassword({ ...newPassword, [name]: value });
+  }
+
+  const handleNewPasswordSubmit = (e) => {
+    e.preventDefault();
+
+    if(newPassword.password !== newPassword.confirmPassword) {
+      setFeedback({open: true, severity: 'error', title: 'Passwords do not match'})
+    }
+
   }
 
   return (
@@ -34,14 +94,15 @@ const Account = () => {
         </Typography>
         <Divider sx={{ my: 2, width:'100%' }} />
 
-        <form style={{ width: '100%' }} >
+        <form onSubmit={handleUserDetailsSubmit} style={{ width: '100%' }} >
           <TextField
             fullWidth
             label='First Name'
             margin='normal'
             variant='outlined'
             name='firstName'
-            value={profile.firstName}
+            value={userDetails.firstName}
+            onChange={handleUserDetailsInputChange}
           />
           <TextField
             fullWidth
@@ -49,13 +110,14 @@ const Account = () => {
             margin='normal'
             variant='outlined'
             name='lastName'
-            value={profile.lastName}
+            value={userDetails.lastName}
+            onChange={handleUserDetailsInputChange}
           />
 
           <Button
             color='primary'
             size='large'
-            disabled
+            disabled={!hasChanges}
             type='submit'
             variant='contained'
             sx={{ mb: 1, textTransform: 'none', float: 'right' }}
@@ -66,26 +128,32 @@ const Account = () => {
         <Divider sx={{ my: 2, width:'100%' }} />
         <Typography 
           color='textSecondary' variant='h6' sx={{ alignSelf: 'flex-start' }} >Change Password</Typography>
-        <form style={{ width: '100%' }}>
+        <form onSubmit={handleNewPasswordSubmit} style={{ width: '100%' }}>
           <TextField
             fullWidth
             label='New Password'
             margin='normal'
+            type='password'
             variant='outlined'
             name='password'
+            value={newPassword.password}
+            onChange={handleNewPasswordInputChange}
           />
           <TextField
             fullWidth
             label='Confirm New Password'
             margin='normal'
             variant='outlined'
+            type='password'
             name='confirmPassword'
+            value={newPassword.confirmPassword}
+            onChange={handleNewPasswordInputChange}
           />
 
           <Button
             color='primary'
             size='large'
-            disabled
+            disabled={newPassword.password === '' || newPassword.confirmPassword === ''}
             type='submit'
             variant='contained'
             sx={{ mb: 1, textTransform: 'none', float: 'right' }}

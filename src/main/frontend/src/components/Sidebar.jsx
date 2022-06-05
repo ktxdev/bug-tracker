@@ -25,12 +25,7 @@ const items = [
         href: '/users',
         icon: (<Group fontSize="small" />),
         title: 'Users'
-    },
-    {
-        href: '/account',
-        icon: (<AccountCircle fontSize="small" />),
-        title: 'My Account'
-    },
+    }
 ];
 
 const drawerWidth = 240;
