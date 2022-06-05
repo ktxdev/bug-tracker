@@ -26,8 +26,8 @@ const Account = () => {
   }
 
   return (
-    <Container sx={{ my: 8, maxWidth: '50%' }}>
-      <Box fullWidth sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Container sx={{ my: 8 }}>
+      <Box fullWidth sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '400px', maxWidth: '600px' }}>
         <Avatar sx={{ height: 80, width: 80 }} />
         <Typography variant='h6' sx={{ mt: 2 }} color='textSecondary'>
           {profile.email}
