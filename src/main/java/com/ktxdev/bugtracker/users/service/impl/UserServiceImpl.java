@@ -55,6 +55,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(UserUpdateDto updateDto) {
         val user = findUserById(updateDto.getId());
+
+        String email = user.getEmail();
+        if (email.equals(adminEmail) || email.equals(userEmail))
+            throw new InvalidRequestException("Cannot update default user details");
+
         user.setFirstName(updateDto.getFirstName());
         user.setLastName(updateDto.getLastName());
 
