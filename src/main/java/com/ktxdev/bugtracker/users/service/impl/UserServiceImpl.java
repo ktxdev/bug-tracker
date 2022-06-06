@@ -65,6 +65,10 @@ public class UserServiceImpl implements UserService {
     public User updatePassword(UserPasswordUpdateDto updateDto) {
         val user = findByEmail(updateDto.getPrincipal().getName());
 
+        String email = user.getEmail();
+        if (email.equals(adminEmail) || email.equals(userEmail))
+            throw new InvalidRequestException("Cannot change default user password");
+
         if (nonNull(updateDto.getPassword()) && updateDto.getPassword().equals(updateDto.getConfirmPassword())) {
             user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
         } else {
