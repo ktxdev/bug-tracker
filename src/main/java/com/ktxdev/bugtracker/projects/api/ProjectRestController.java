@@ -67,26 +67,6 @@ public class ProjectRestController {
         return ResponseEntity.ok(projectService.getAllProjects(pageable));
     }
 
-    @PutMapping("{projectId}/members/add-member")
-    @ApiOperation("Add member to project")
-    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
-    public ResponseEntity<Project> addMember(
-            @PathVariable long projectId,
-            @RequestParam long memberId
-    ) {
-        return ResponseEntity.ok(projectService.addMember(projectId, memberId));
-    }
-
-    @ApiOperation("Remove member from project")
-    @PutMapping("{projectId}/members/remove-member")
-    @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
-    public ResponseEntity<Project> removeMember(
-            @PathVariable long projectId,
-            @RequestParam long memberId
-    ) {
-        return ResponseEntity.ok(projectService.removeMember(projectId, memberId));
-    }
-
     @DeleteMapping("{projectId}")
     @ApiOperation("Delete project")
     @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")

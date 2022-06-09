@@ -14,9 +14,5 @@ public interface ProjectService {
 
     Page<Project> getAllProjects(Pageable pageable);
 
-    Project addMember(long projectId, long userId);
-
-    Project removeMember(long projectId, long userId);
-
     void deleteProject(long id);
 }

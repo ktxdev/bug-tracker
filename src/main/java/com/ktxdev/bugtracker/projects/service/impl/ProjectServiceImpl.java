@@ -6,6 +6,7 @@ import com.ktxdev.bugtracker.projects.dao.ProjectDao;
 import com.ktxdev.bugtracker.projects.dto.ProjectDto;
 import com.ktxdev.bugtracker.projects.model.Project;
 import com.ktxdev.bugtracker.projects.service.ProjectService;
+import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,14 @@ import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -32,6 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
         val project = Project.builder()
                 .name(projectDto.getName())
                 .description(projectDto.getDescription())
+                .members(getProjectMembers(projectDto.getMemberIds()))
                 .build();
 
         return projectDao.save(project);
@@ -45,8 +55,16 @@ public class ProjectServiceImpl implements ProjectService {
 
         val project = getProjectById(projectDto.getId());
 
+        val updatedMembers = getProjectMembers(projectDto.getMemberIds());
+
+        if (nonNull(project.getMembers()) && !project.getMembers().isEmpty()
+                && !updatedMembers.isEmpty()) {
+            updatedMembers.retainAll(project.getMembers());
+        }
+
         project.setName(projectDto.getName());
         project.setDescription(projectDto.getDescription());
+        project.setMembers(new HashSet<>(updatedMembers));
 
         return projectDao.save(project);
     }
@@ -63,27 +81,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project addMember(long projectId, long userId) {
-        val project = getProjectById(projectId);
-        val user = userService.findUserById(userId);
-
-        if (project.getMembers().contains(user))
-            throw new InvalidRequestException("User is already a member of the project");
-
-        project.addMember(user);
-        return projectDao.save(project);
-    }
-
-    @Override
-    public Project removeMember(long projectId, long userId) {
-        val project = getProjectById(projectId);
-        val user = userService.findUserById(userId);
-        project.removeMember(user);
-        return projectDao.save(project);
-    }
-
-    @Override
     public void deleteProject(long id) {
         projectDao.deleteById(id);
+    }
+
+    private Set<User> getProjectMembers(List<Long> memberIds) {
+        return isNull(memberIds) ? Set.of() : memberIds.stream()
+                .map(userService::findUserById)
+                .collect(Collectors.toSet());
     }
 }
