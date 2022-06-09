@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.Collection;
 
 import static com.ktxdev.bugtracker.users.model.UserRole.USER;
 import static java.util.Objects.nonNull;
@@ -91,6 +92,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllUser(Pageable pageable, String searchQuery) {
         return userDao.findAll(pageable);
+    }
+
+    @Override
+    public Collection<User> findAll(String searchQuery) {
+        return userDao.findAll();
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.security.Principal;
+import java.util.Collection;
 
 public interface UserService {
     User findUserById(long id);
@@ -27,4 +28,6 @@ public interface UserService {
     Page<User> getAllUser(Pageable pageable, String searchQuery);
 
     void deleteUser(long id);
+
+    Collection<User> findAll(String searchQuery);
 }

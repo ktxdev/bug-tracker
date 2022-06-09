@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;
+import java.util.Collection;
 
 @RestController
 @Api(tags = "Users")
@@ -86,12 +87,20 @@ public class UserRestController {
     }
 
     @GetMapping
-    @ApiOperation("Get all users")
-    public ResponseEntity<Page<User>> getAllUser(
+    @ApiOperation("Get paged users")
+    public ResponseEntity<Page<User>> getPagedUsers(
             @PageableDefault(sort = "lastName") Pageable pageable,
             @RequestParam(required = false) String q
     ) {
         return ResponseEntity.ok(userService.getAllUser(pageable, q));
+    }
+
+    @GetMapping("all")
+    @ApiOperation("Get all users")
+    public ResponseEntity<Collection<User>> getAllUsers(
+            @RequestParam(required = false) String q
+    ) {
+        return ResponseEntity.ok(userService.findAll(q));
     }
 
     @DeleteMapping("{userId}")
