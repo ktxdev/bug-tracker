@@ -27,7 +27,7 @@ const AddProject = ({ modalOpen, toggleModal, project, setProject, onSave }) => 
     const [selectedMembers, setSelectedMembers] = useState([]);
 
     useEffect(() => {
-        const selected = project.members.map((member) => member.id);
+        const selected = project.members !== undefined && project.members !== null ? project.members.map((member) => member.id): [];
         setSelectedMembers(selected)
     }, [])
 

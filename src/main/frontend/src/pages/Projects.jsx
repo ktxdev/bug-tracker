@@ -117,6 +117,8 @@ const Projects = () => {
         }
       });
     }
+
+    fetchProjects(page, rowsPerPage);
   }
 
   const editProject = async (callback) => {
