@@ -24,6 +24,13 @@ const AddProject = ({ modalOpen, toggleModal, project, setProject, onSave }) => 
 
     const [users, setUsers] = useState([])
 
+    const [selectedMembers, setSelectedMembers] = useState([]);
+
+    useEffect(() => {
+        const selected = project.members.map((member) => member.id);
+        setSelectedMembers(selected)
+    }, [])
+
     const { auth: { accessToken } } = useAuth();
 
     useEffect(() => {
@@ -95,8 +102,10 @@ const AddProject = ({ modalOpen, toggleModal, project, setProject, onSave }) => 
                                     pageSize={2}
                                     rowsPerPageOptions={[2]}
                                     checkboxSelection
+                                    selectionModel={selectedMembers}
                                     onSelectionModelChange={(newSelection) => {
                                         setProject({...project, memberIds: newSelection})
+                                        setSelectedMembers(newSelection)
                                     }}
                                 />
                             </Grid>
