@@ -1,9 +1,13 @@
 import { Delete, NoteAlt } from '@mui/icons-material'
 import { Avatar, AvatarGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from '@mui/material'
 import React from 'react'
+import { useAuth } from '../auth/auth'
 import TablePaginationActions from './TablePaginationActions'
 
 const PaginatedTable = ({ columns, data, count, page, rowsPerPage, handlePageChange, handleRowsPerPageChange }) => {
+    
+    const { auth: { profile } } = useAuth();
+
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer>
@@ -31,7 +35,7 @@ const PaginatedTable = ({ columns, data, count, page, rowsPerPage, handlePageCha
                                                 if (column.id === 'actions') {
                                                     return (<TableCell key={column.id}>
                                                         {
-                                                            column.actions.map(action => (<IconButton key={action.id} onClick={() => action.onClick(dt.id)} color={action.color} size="small" sx={{ mx: 1 }} >
+                                                            column.actions.map(action => (<IconButton disabled={profile !== null && profile.role === 'USER'} key={action.id} onClick={() => action.onClick(dt.id)} color={action.color} size="small" sx={{ mx: 1 }} >
                                                                 {action.icon}
                                                             </IconButton>))
                                                         }

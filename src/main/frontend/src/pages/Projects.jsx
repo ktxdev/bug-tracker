@@ -27,7 +27,7 @@ const Projects = () => {
 
   const toggleModal = () => setModalOpen(!modalOpen)
 
-  const { auth: { accessToken } } = useAuth();
+  const { auth: { profile, accessToken } } = useAuth();
 
   const { setFeedback } = useAlert();
 
@@ -51,8 +51,6 @@ const Projects = () => {
 
     if (response.success) {
       const data = response.data;
-
-      console.log(data);
       setTotalCount(data.totalElements)
       setPage(data.number)
       setRowsPerPage(data.size)
@@ -165,7 +163,7 @@ const Projects = () => {
       const newProjects = projects.filter(project => project.id !== id);
       setProjects(newProjects);
     } else {
-      setFeedback({open: true, severity: 'error', title: data.message})
+      setFeedback({ open: true, severity: 'error', title: data.message })
     }
   }
 
@@ -173,13 +171,13 @@ const Projects = () => {
     { id: 'name', label: 'Name', minWidth: 170, align: 'left' },
     { id: 'description', label: 'Description', minWidth: 100, align: 'left' },
     { id: 'members', label: 'Members', minWidth: 170, align: 'left' },
-    { id: 'actions', label: '', minWidth: 170, align: 'left', actions: [
-      { id: 'show-details', icon: <NoteAlt/>, color: 'primary', onClick: onEdit },
-      { id: 'delete-project', icon: <Delete />, color: 'error', onClick: onDelete }
-    ]},
+    {
+      id: 'actions', label: '', minWidth: 170, align: 'left', actions: [
+        { id: 'show-details', icon: <NoteAlt />, color: 'primary', onClick: onEdit },
+        { id: 'delete-project', icon: <Delete />, color: 'error', onClick: onDelete }
+      ]
+    },
   ];
-
-  const params = useParams();
 
   return (
     <>
@@ -191,9 +189,9 @@ const Projects = () => {
           Projects
         </Typography>
 
-        <Divider sx={{ my: 1}} />
+        <Divider sx={{ my: 1 }} />
 
-        { !params.projectId && <Box sx={{ py: 1, display: 'flex', justifyContent: 'flex-end' }} >
+        {(profile != null && profile.role !== 'USER') && <Box sx={{ py: 1, display: 'flex', justifyContent: 'flex-end' }} >
           <Button
             color='primary'
             size='small'
@@ -212,12 +210,10 @@ const Projects = () => {
           setProject={setProject}
           onSave={saveProject} />
 
-        { params.projectId ? <Outlet /> :
-        
-          projects.length === 0 ? <NoContent message="There are no projects. You can add one by clicking the 'New Project' button." />
-            : <PaginatedTable columns={COLUMNS} data={projects} count={totalCount}
-              page={page} rowsPerPage={rowsPerPage} 
-              handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
+        {projects.length === 0 ? <NoContent message="There are no projects. You can add one by clicking the 'New Project' button." />
+          : <PaginatedTable columns={COLUMNS} data={projects} count={totalCount}
+            page={page} rowsPerPage={rowsPerPage}
+            handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
         }
       </Box>}
     </>
