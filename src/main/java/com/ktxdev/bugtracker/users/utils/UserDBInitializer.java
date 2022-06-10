@@ -34,6 +34,8 @@ public class UserDBInitializer implements InitializingBean {
     public void afterPropertiesSet() {
         val admin = User.builder()
                 .email(adminEmail)
+                .firstName("Default")
+                .lastName("Admin")
                 .password(passwordEncoder.encode(adminPassword))
                 .role(UserRole.ADMIN)
                 .build();
@@ -43,6 +45,8 @@ public class UserDBInitializer implements InitializingBean {
 
         val user = User.builder()
                 .email(userEmail)
+                .firstName("Default")
+                .lastName("User")
                 .password(passwordEncoder.encode(userPassword))
                 .role(UserRole.USER)
                 .build();

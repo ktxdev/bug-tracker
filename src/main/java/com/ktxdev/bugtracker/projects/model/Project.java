@@ -32,16 +32,4 @@ public class Project {
 
     @OneToMany
     private Set<User> members;
-
-    public void addMember(User user) {
-        if (isNull(this.members))
-            this.members = new HashSet<>();
-
-        this.members.add(user);
-    }
-
-    public void removeMember(User user) {
-        if (isNull(this.members)) return;
-        this.members.remove(user);
-    }
 }
