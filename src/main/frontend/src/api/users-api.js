@@ -5,9 +5,14 @@ const BASE_URL = 'v1/users'
 const AUTHORIZATION_HEADER = 'Authorization'
 const TOKEN_PREFIX = 'Bearer'
 
-export const getAllUsers = async (page, size, accessToken) => {
+export const getPagedUsers = async (page, size, accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await get(`${BASE_URL}?page=${page}&size=${size}`, headers);
+}
+
+export const getAllUsers = async(accessToken) => {
+    const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
+    return await get(`${BASE_URL}/all`, headers)
 }
 
 export const createUser = async (user, accessToken) => {

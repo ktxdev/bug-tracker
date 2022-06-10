@@ -1,5 +1,5 @@
 import { Delete, NoteAlt } from '@mui/icons-material'
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from '@mui/material'
+import { Avatar, AvatarGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from '@mui/material'
 import React from 'react'
 import TablePaginationActions from './TablePaginationActions'
 
@@ -39,6 +39,13 @@ const PaginatedTable = ({ columns, data, count, page, rowsPerPage, handlePageCha
                                                 }
 
                                                 const value = dt[column.id];
+                                                if(typeof value === 'object') {
+                                                    return (<TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                                                        {value.length > 0 && <AvatarGroup sx={{ flexDirection: 'row' }}>
+                                                            { value.map(member => <Avatar>{`${member.firstName[0]}${member.lastName[0]}`}</Avatar>) }
+                                                        </AvatarGroup> }
+                                                    </TableCell>)
+                                                }
                                                 return (<TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
                                                     {value === null ? "---" : value}
                                                 </TableCell>)

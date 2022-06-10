@@ -24,3 +24,8 @@ export const deleteProject = async(id, accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await remove(`${BASE_URL}/${id}`, headers);
 }
+
+export const getProjectById = async(id, accessToken) => {
+    const headers = {[AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}`}
+    return await get(`${BASE_URL}/${id}`, headers);
+}

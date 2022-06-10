@@ -1,7 +1,7 @@
 import { Delete, NoteAlt } from '@mui/icons-material';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react'
-import { createUser, deleteUser, getAllUsers, updateUser } from '../api/users-api';
+import { createUser, deleteUser, getPagedUsers, updateUser } from '../api/users-api';
 import { useAuth } from '../auth/auth';
 import NoContent from '../components/NoContent';
 import PaginatedTable from '../components/PaginatedTable';
@@ -37,7 +37,7 @@ const Users = () => {
 
   const fetchUsers = async (newPage, size) => {
 
-    const response = await getAllUsers(newPage, size, accessToken);
+    const response = await getPagedUsers(newPage, size, accessToken);
     if (response.success) {
       const data = response.data;
 

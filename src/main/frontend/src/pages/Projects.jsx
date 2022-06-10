@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import ProjectDetails from "../components/ProjectDetails";
+import AddProject from "../components/AddProject";
 import { createProject, deleteProject, getAllProjects, updateProject } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
@@ -8,6 +8,7 @@ import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
 import { useSpinner } from "../utils/SpinnerContext";
 import NoContent from "../components/NoContent";
 import PaginatedTable from "../components/PaginatedTable";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 const Projects = () => {
 
@@ -51,6 +52,7 @@ const Projects = () => {
     if (response.success) {
       const data = response.data;
 
+      console.log(data);
       setTotalCount(data.totalElements)
       setPage(data.number)
       setRowsPerPage(data.size)
@@ -67,6 +69,7 @@ const Projects = () => {
   const [isEdit, setIsEdit] = useState(false)
 
   const saveProject = async () => {
+    console.log(project);
     if (isEdit) {
       editProject((res) => {
         if (res.success) {
@@ -116,13 +119,6 @@ const Projects = () => {
     }
   }
 
-  const handleEditButtonClick = (id) => {
-    setIsEdit(true);
-    const projectToEdit = projects.filter(project => project.id === id)[0];
-    setProject(projectToEdit);
-    toggleModal();
-  }
-
   const editProject = async (callback) => {
     const response = await updateProject(project.id, project, accessToken);
     callback(response);
@@ -134,7 +130,10 @@ const Projects = () => {
   }
 
   const onEdit = (id) => {
-    console.log(id);
+    setIsEdit(true);
+    const projectToEdit = projects.filter(project => project.id === id)[0];
+    setProject(projectToEdit);
+    toggleModal();
   }
 
 
@@ -168,20 +167,17 @@ const Projects = () => {
     }
   }
 
-
-  const showProjectDetails = (id) => {
-    console.log(id);
-  }
-
   const COLUMNS = [
     { id: 'name', label: 'Name', minWidth: 170, align: 'left' },
     { id: 'description', label: 'Description', minWidth: 100, align: 'left' },
     { id: 'members', label: 'Members', minWidth: 170, align: 'left' },
     { id: 'actions', label: '', minWidth: 170, align: 'left', actions: [
-      { id: 'show-details', icon: <Visibility/>, color: 'primary', onClick: showProjectDetails },
+      { id: 'show-details', icon: <NoteAlt/>, color: 'primary', onClick: onEdit },
       { id: 'delete-project', icon: <Delete />, color: 'error', onClick: onDelete }
     ]},
   ];
+
+  const params = useParams();
 
   return (
     <>
@@ -195,7 +191,7 @@ const Projects = () => {
 
         <Divider sx={{ my: 1}} />
 
-        <Box sx={{ py: 1, display: 'flex', justifyContent: 'flex-end' }} >
+        { !params.projectId && <Box sx={{ py: 1, display: 'flex', justifyContent: 'flex-end' }} >
           <Button
             color='primary'
             size='small'
@@ -205,16 +201,17 @@ const Projects = () => {
           >
             New Project
           </Button>
-        </Box>
+        </Box>}
 
-        <ProjectDetails
+        <AddProject
           modalOpen={modalOpen}
           toggleModal={toggleModal}
           project={project}
           setProject={setProject}
           onSave={saveProject} />
 
-        {
+        { params.projectId ? <Outlet /> :
+        
           projects.length === 0 ? <NoContent message="There are no projects. You can add one by clicking the 'New Project' button." />
             : <PaginatedTable columns={COLUMNS} data={projects} count={totalCount}
               page={page} rowsPerPage={rowsPerPage} 

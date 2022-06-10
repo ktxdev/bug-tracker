@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import './index.css';
 import Account from './pages/Account';
 import Dashboard from './pages/Dashboard';
+import Project from './pages/Project';
 import Projects from './pages/Projects';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
@@ -25,7 +26,9 @@ root.render(
             <Route path='/' element={<RequireAuth><Layout /></RequireAuth>}>
               <Route index element={<Dashboard />} />
               <Route path='/tickets' element={<Tickets />} />
-              <Route path='/projects' element={<Projects />} />
+              <Route path='/projects' element={<Projects />}>
+                <Route path=':projectId' element={<Project />}/>
+              </Route>
               <Route path='/users' element={<Users />} />
               <Route path='/account' element={<Account />} />
             </Route>
