@@ -15,11 +15,13 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static com.ktxdev.bugtracker.users.model.UserRole.USER;
 import static java.util.Objects.nonNull;
@@ -91,12 +93,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getAllUser(Pageable pageable, String searchQuery) {
-        return userDao.findAll(pageable);
+        val username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userDao.findAllByEmailIsNotLike(username, pageable);
     }
 
     @Override
     public Collection<User> findAll(String searchQuery) {
-        return userDao.findAll();
+        val username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userDao.findAllByEmailIsNotLike(username);
     }
 
     @Override
