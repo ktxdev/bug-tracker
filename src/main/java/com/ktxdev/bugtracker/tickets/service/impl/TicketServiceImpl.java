@@ -54,10 +54,9 @@ public class TicketServiceImpl implements TicketService {
         val ticket = getTicketById(ticketDto.getId());
         val assignees = getTicketAssignees(ticketDto.getAssigneeIds());
 
-        val allAreMembersOfProject = !assignees.isEmpty() && ticketDto.getProject().getMembers().containsAll(assignees);
-
-        if (!allAreMembersOfProject)
+        if (!assignees.isEmpty() && !ticketDto.getProject().getMembers().containsAll(assignees)) {
             throw new InvalidRequestException("Only members of the project can be assigned to the project's ticket");
+        }
 
         if (nonNull(ticket.getAssignees()) && !ticket.getAssignees().isEmpty()
                 && !assignees.isEmpty()) {
