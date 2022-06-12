@@ -75,21 +75,4 @@ public class TicketRestController {
         return ResponseEntity.noContent().build();
     }
 
-    @ApiOperation("Add assignee to ticket")
-    @PutMapping("{ticketId}/assignees/add-assignee")
-    public ResponseEntity<Ticket> addAssignee(
-            @PathVariable long ticketId,
-            @RequestParam long assigneeId
-    ) {
-        return ResponseEntity.ok(ticketService.addAssignee(ticketId, assigneeId));
-    }
-
-    @ApiOperation("Remove assignee from ticket")
-    @PutMapping("{ticketId}/assignees/remove-assignee")
-    public ResponseEntity<Ticket> removeAssignee(
-            @PathVariable long ticketId,
-            @RequestParam long assigneeId
-    ) {
-        return ResponseEntity.ok(ticketService.removeAssignee(ticketId, assigneeId));
-    }
 }
