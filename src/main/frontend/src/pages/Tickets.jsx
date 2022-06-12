@@ -1,6 +1,7 @@
 import { Delete, NoteAlt, Visibility } from '@mui/icons-material';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { createTicket, deleteTicket, getAllTicketsPaged, updateTicket } from '../api/tickets-api';
 import { useAuth } from '../auth/auth';
 import NoContent from '../components/NoContent';
@@ -148,8 +149,10 @@ const Tickets = () => {
     }
   }
 
+  const navigate = useNavigate();
+
   const onView = (id) => {
-    console.log(id);
+    navigate(`${id}`, { replace: true })
   }
 
   const COLUMNS = [

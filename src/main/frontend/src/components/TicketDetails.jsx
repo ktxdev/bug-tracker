@@ -11,7 +11,7 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
 
     useEffect(() => {
         fetchAllProjects();
-        setSelectedAssignees(ticket ? ticket.assignees.map(assignee => assignee.id) : []);
+        setSelectedAssignees((ticket && ticket.assignees) ? ticket.assignees.map(assignee => assignee.id) : []);
     }, [])
 
     const [projects, setProjects] = useState([])
