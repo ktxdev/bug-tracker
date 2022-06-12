@@ -96,11 +96,12 @@ const AddProject = ({ modalOpen, toggleModal, project, setProject, onSave }) => 
                                 />
                             </Grid>
                             <Grid item xs={12} md={6} >
+                                <Typography sx={{ my: 1 }} >Project Members</Typography>
                                 <DataGrid
                                     rows={users}
                                     columns={COLUMNS}
-                                    pageSize={2}
-                                    rowsPerPageOptions={[2]}
+                                    pageSize={5}
+                                    rowsPerPageOptions={[5]}
                                     checkboxSelection
                                     selectionModel={selectedMembers}
                                     onSelectionModelChange={(newSelection) => {

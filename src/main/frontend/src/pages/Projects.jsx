@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarGroup, Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import AddProject from "../components/AddProject";
-import { createProject, deleteProject, getAllProjects, updateProject } from "../api/projects-api";
+import { createProject, deleteProject, getAllProjectsPaged, updateProject } from "../api/projects-api";
 import { useAuth } from "../auth/auth";
 import { useAlert } from "../utils/AlertContext";
 import { Delete, NoteAlt, Visibility } from "@mui/icons-material";
@@ -47,7 +47,7 @@ const Projects = () => {
   }, [])
 
   const fetchProjects = async (page, size) => {
-    const response = await getAllProjects(page, size, accessToken);
+    const response = await getAllProjectsPaged(page, size, accessToken);
 
     if (response.success) {
       const data = response.data;
