@@ -49,7 +49,7 @@ public class Ticket {
     @ManyToOne
     private Project project;
 
-    @OneToMany
+    @ManyToMany
     private Set<User> assignees;
 
     public static Ticket build(TicketDto ticketDto) {
