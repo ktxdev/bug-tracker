@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -78,6 +79,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Page<Project> getAllProjects(Pageable pageable) {
         return projectDao.findAll(pageable);
+    }
+
+    @Override
+    public Collection<Project> getAllProjects() {
+        return projectDao.findAll();
     }
 
     @Override

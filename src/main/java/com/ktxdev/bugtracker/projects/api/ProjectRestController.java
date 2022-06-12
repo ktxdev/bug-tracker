@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,11 +61,17 @@ public class ProjectRestController {
     }
 
     @GetMapping
-    @ApiOperation("Get all projects")
-    public ResponseEntity<Page<Project>> getAllProjects(
+    @ApiOperation("Get all projects (Paged)")
+    public ResponseEntity<Page<Project>> getAllProjectsPaged(
             @PageableDefault Pageable pageable
     ) {
         return ResponseEntity.ok(projectService.getAllProjects(pageable));
+    }
+
+    @GetMapping("all")
+    @ApiOperation("Get all projects")
+    public ResponseEntity<Collection<Project>> getAllProjects() {
+        return ResponseEntity.ok(projectService.getAllProjects());
     }
 
     @DeleteMapping("{projectId}")
