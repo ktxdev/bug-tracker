@@ -1,7 +1,10 @@
+import { Delete, NoteAlt, Visibility } from '@mui/icons-material';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react'
-import { createTicket, getAllTicketsPaged } from '../api/tickets-api';
+import { createTicket, deleteTicket, getAllTicketsPaged, updateTicket } from '../api/tickets-api';
 import { useAuth } from '../auth/auth';
+import NoContent from '../components/NoContent';
+import PaginatedTable from '../components/PaginatedTable';
 import TicketDetails from '../components/TicketDetails';
 import { useAlert } from '../utils/AlertContext';
 import { useSpinner } from '../utils/SpinnerContext';
@@ -29,16 +32,17 @@ const Tickets = () => {
     fetch();
   }, [])
 
+  const [tickets, setTickets] = useState([])
+
   const fetchTickets = async (page, size) => {
     const response = await getAllTicketsPaged(page, size, accessToken);
 
-    console.log(response);
     if (response.success) {
       const data = response.data;
       setTotalCount(data.totalElements)
       setPage(data.number)
       setRowsPerPage(data.size)
-      // setProjects(data.content);
+      setTickets(data.content);
     } else {
       setFeedback({
         open: true,
@@ -69,14 +73,16 @@ const Tickets = () => {
   const { auth: { accessToken } } = useAuth();
 
   const onSave = async () => {
-    console.log(ticket);
-    onCreateTicket();
+    if(isEdit) {
+      onUpdateTicket();
+    } else {
+      onCreateTicket();
+    }
   }
 
   const onCreateTicket = async () => {
-    const response = createTicket(ticket, accessToken)
+    const response = await createTicket(ticket, accessToken)
 
-    console.log(response);
     if (response.success) {
       setFeedback({
         open: true,
@@ -84,12 +90,93 @@ const Tickets = () => {
         title: 'Ticket successfully created!'
       })
 
-      // setProjects([...projects, res.data])
+      fetchTickets(page, rowsPerPage)
       setTicket(initTicket)
       toggleTicketModal();
     } else {
       setFeedback({ open: true, severity: 'error', title: response.data.message })
     }
+  }
+
+  const onUpdateTicket = async() => {
+    console.log(ticket);
+    const response = await updateTicket(ticket.id, ticket, accessToken)
+
+    if (response.success) {
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: 'Ticket successfully updated!'
+      })
+      
+      const id = response.data.id;
+      const updatedTickets = tickets.map(ticket => {
+        if(id === ticket.id) return response.data;
+        return ticket;
+      })
+
+      setTickets(updatedTickets)
+      setTicket(initTicket)
+      toggleTicketModal();
+      setIsEdit(false)
+    } else {
+      setFeedback({ open: true, severity: 'error', title: response.data.message })
+    }
+  }
+
+  const [isEdit, setIsEdit] = useState(false)
+
+  const onEdit = (id) => {
+    const ticketToEdit = tickets.filter(ticket => ticket.id === id)[0];
+    setTicket({...ticketToEdit, projectId: ticketToEdit.project.id});
+    setIsEdit(true);
+    toggleTicketModal();
+  }
+
+  const onDelete = async(id) => {
+    const response = await deleteTicket(id, accessToken);
+    if(response.success) {
+      setFeedback({
+        open: true,
+        severity: 'success',
+        title: 'Ticket successfully deleted!'
+      })
+
+      fetchTickets(page, rowsPerPage);
+    } else {
+      setFeedback({ open: true, severity: 'error', title: response.data.message })
+    }
+  }
+
+  const onView = (id) => {
+    console.log(id);
+  }
+
+  const COLUMNS = [
+    { id: 'title', label: 'Title', minWidth: 80, align: 'left' },
+    { id: 'priority', label: 'Priority', minWidth: 80, align: 'left' },
+    { id: 'status', label: 'Status', minWidth: 80, align: 'left' },
+    { id: 'type', label: 'Type', minWidth: 80, align: 'left' },
+    { id: 'assignees', label: 'Assignees',  minWidth: 170, align: 'left' },
+    {
+      id: 'actions', label: '', align: 'left', actions: [
+        { id: 'view-ticket', icon: <Visibility />, color: 'info', onClick: onView },
+        { id: 'edit-ticket', icon: <NoteAlt />, color: 'primary', onClick: onEdit },
+        { id: 'delete-ticket', icon: <Delete />, color: 'error', onClick: onDelete }
+      ]
+    },
+  ];
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+    fetchTickets(newPage, rowsPerPage);
+  }
+
+  const handleRowsPerPageChange = (event) => {
+    const size = event.target.value;
+    setRowsPerPage(size);
+    setPage(0);
+    fetchTickets(0, size);
   }
 
   return (
@@ -123,6 +210,12 @@ const Tickets = () => {
           setTicket={setTicket}
           onSave={onSave}
         />
+
+        {tickets.length === 0 ? <NoContent message="There are no tickets. You can add one by clicking the 'New Ticket' button." />
+          : <PaginatedTable columns={COLUMNS} data={tickets} count={totalCount}
+            page={page} rowsPerPage={rowsPerPage}
+            handlePageChange={handlePageChange} handleRowsPerPageChange={handleRowsPerPageChange} />
+        }
 
       </Box>
       }

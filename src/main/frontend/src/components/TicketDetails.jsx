@@ -11,6 +11,7 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
 
     useEffect(() => {
         fetchAllProjects();
+        setSelectedAssignees(ticket ? ticket.assignees.map(assignee => assignee.id) : []);
     }, [])
 
     const [projects, setProjects] = useState([])
@@ -23,6 +24,12 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
     }
 
     const [users, setUsers] = useState([])
+
+    const [selectedAssignees, setSelectedAssignees] = useState([])
+
+    useEffect(() => {
+        setUsers((ticket && ticket.project) ? ticket.project.members.map(member => ({ id: member.id, name: `${member.firstName} ${member.lastName}`})): [])
+    }, [ticket])
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -45,7 +52,6 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
     }
 
     useEffect(() => {
-        console.log(ticket.title + ' ' + ticket.projectId);
         if (ticket.title !== '' && ticket.projectId !== 0) {
             setCanSave(true);
         } else {
@@ -57,10 +63,9 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
         { field: 'name', headerName: 'Name', width: 350 },
     ]
 
-    const [selectedAssignees, setSelectedAssignees] = useState([])
-
     const handleFormSubmit = (e) => {
         e.preventDefault();
+        setUsers([]);
         onSave();
     }
 
