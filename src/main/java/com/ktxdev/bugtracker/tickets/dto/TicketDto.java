@@ -11,6 +11,8 @@ import com.ktxdev.bugtracker.tickets.model.TicketType;
 import com.ktxdev.bugtracker.tickets.model.TicketTimeEstimated;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TicketDto {
     @JsonIgnore
@@ -31,4 +33,6 @@ public class TicketDto {
     @JsonProperty("projectId")
     @JsonDeserialize(using = ProjectDeserializer.class)
     private Project project;
+
+    private List<Long> assigneeIds;
 }

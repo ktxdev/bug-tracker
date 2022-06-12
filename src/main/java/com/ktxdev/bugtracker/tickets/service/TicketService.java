@@ -17,8 +17,4 @@ public interface TicketService {
     Page<Ticket> getAllTickets(Pageable pageable, Principal principal);
 
     Ticket getTicketById(long id);
-
-    Ticket addAssignee(long ticketId, long assigneeId);
-
-    Ticket removeAssignee(long ticketId, long assigneeId);
 }

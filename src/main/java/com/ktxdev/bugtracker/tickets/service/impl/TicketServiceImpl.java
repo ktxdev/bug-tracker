@@ -6,6 +6,7 @@ import com.ktxdev.bugtracker.tickets.dao.TicketDao;
 import com.ktxdev.bugtracker.tickets.dto.TicketDto;
 import com.ktxdev.bugtracker.tickets.model.Ticket;
 import com.ktxdev.bugtracker.tickets.service.TicketService;
+import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -14,8 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.ktxdev.bugtracker.users.model.UserRole.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -28,15 +34,38 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public Ticket createTicket(TicketDto ticketDto) {
         val ticket = Ticket.build(ticketDto);
+        val assignees = getTicketAssignees(ticketDto.getAssigneeIds());
+
+        val allAreMembersOfProject = ticketDto.getProject().getMembers().containsAll(assignees);
+
+        if (!allAreMembersOfProject)
+            throw new InvalidRequestException("Only members of the project can be assigned to the project's ticket");
+
+        ticket.setAssignees(assignees);
+
         ticketDao.saveAndFlush(ticket);
         ticket.setTicketNo(String.format("%06d", ticket.getId()));
+
         return ticketDao.save(ticket);
     }
 
     @Override
     public Ticket updateTicket(TicketDto ticketDto) {
         val ticket = getTicketById(ticketDto.getId());
+        val assignees = getTicketAssignees(ticketDto.getAssigneeIds());
+
+        val allAreMembersOfProject = !assignees.isEmpty() && ticketDto.getProject().getMembers().containsAll(assignees);
+
+        if (!allAreMembersOfProject)
+            throw new InvalidRequestException("Only members of the project can be assigned to the project's ticket");
+
+        if (nonNull(ticket.getAssignees()) && !ticket.getAssignees().isEmpty()
+                && !assignees.isEmpty()) {
+            assignees.retainAll(ticket.getAssignees());
+        }
+
         ticket.update(ticketDto);
+        ticket.setAssignees(assignees);
         return ticketDao.save(ticket);
     }
 
@@ -61,23 +90,9 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Ticket with id: %d not found", id)));
     }
 
-    @Override
-    public Ticket addAssignee(long ticketId, long assigneeId) {
-        val ticket = getTicketById(ticketId);
-        val user = userService.findUserById(assigneeId);
-
-        if (!ticket.getProject().getMembers().contains(user))
-            throw new InvalidRequestException("You can only add assignees who are already members of the project");
-
-        ticket.addAssignee(user);
-        return ticketDao.save(ticket);
-    }
-
-    @Override
-    public Ticket removeAssignee(long ticketId, long assigneeId) {
-        val ticket = getTicketById(ticketId);
-        val user = userService.findUserById(assigneeId);
-        ticket.removeAssignee(user);
-        return ticketDao.save(ticket);
+    private Set<User> getTicketAssignees(List<Long> assigneeIds) {
+        return isNull(assigneeIds) ? Set.of() : assigneeIds.stream()
+                .map(userService::findUserById)
+                .collect(Collectors.toSet());
     }
 }
