@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,9 +44,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<Comment> getCommentsByTicket(Pageable pageable, String ticketNo) {
+    public Collection<Comment> getCommentsByTicket(String ticketNo) {
         log.debug("### Retrieving comments for ticket: " + ticketNo);
-        return commentDao.findAllByTicket_TicketNo(pageable, ticketNo);
+        return commentDao.findAllByTicket_TicketNo(ticketNo);
     }
 
     @Override

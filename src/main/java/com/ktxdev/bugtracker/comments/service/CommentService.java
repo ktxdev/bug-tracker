@@ -5,6 +5,8 @@ import com.ktxdev.bugtracker.comments.model.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
+
 public interface CommentService {
     Comment createComment(CommentDto commentDto);
 
@@ -12,7 +14,7 @@ public interface CommentService {
 
     Comment getCommentById(long id);
 
-    Page<Comment> getCommentsByTicket(Pageable pageable, String ticketNo);
+    Collection<Comment> getCommentsByTicket(String ticketNo);
 
     void deleteComment(long id);
 }

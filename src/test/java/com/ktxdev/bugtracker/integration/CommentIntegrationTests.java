@@ -97,7 +97,7 @@ public class CommentIntegrationTests {
         mockMvc.perform(
                         get(baseUrl + "?ticketNo=000001"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test

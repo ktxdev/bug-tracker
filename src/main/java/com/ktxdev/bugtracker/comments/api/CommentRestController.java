@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,11 +60,11 @@ public class CommentRestController {
 
     @GetMapping
     @ApiOperation("Get comments by ticket number")
-    public ResponseEntity<Page<Comment>> getCommentsByTicket(
+    public ResponseEntity<Collection<Comment>> getCommentsByTicket(
             @PageableDefault Pageable pageable,
             @RequestParam String ticketNo
     ) {
-        return ResponseEntity.ok(commentService.getCommentsByTicket(pageable, ticketNo));
+        return ResponseEntity.ok(commentService.getCommentsByTicket(ticketNo));
     }
 
     @DeleteMapping("{commentId}")
