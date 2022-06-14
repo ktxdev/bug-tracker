@@ -61,7 +61,6 @@ public class CommentRestController {
     @GetMapping
     @ApiOperation("Get comments by ticket number")
     public ResponseEntity<Collection<Comment>> getCommentsByTicket(
-            @PageableDefault Pageable pageable,
             @RequestParam String ticketNo
     ) {
         return ResponseEntity.ok(commentService.getCommentsByTicket(ticketNo));
