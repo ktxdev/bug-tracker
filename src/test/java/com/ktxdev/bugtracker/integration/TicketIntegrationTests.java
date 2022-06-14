@@ -1,5 +1,6 @@
 package com.ktxdev.bugtracker.integration;
 
+import com.ktxdev.bugtracker.exception.InvalidRequestException;
 import lombok.val;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.shouldHaveThrown;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,7 +54,8 @@ public class TicketIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json))
                 .andExpect(status().isCreated())
-                        .andExpect(jsonPath("$.ticketNo", notNullValue()));
+                .andExpect(jsonPath("$.ticketNo", notNullValue()))
+                .andExpect(jsonPath("$.assignees", hasSize(0)));
 
         json = "{" +
                 "\"title\": \"Ticket 2\", " +
@@ -61,18 +64,41 @@ public class TicketIntegrationTests {
                 "\"priority\":\"HIGH\"," +
                 "\"status\":\"OPEN\"," +
                 "\"timeEstimated\": {\"timeEstimated\": 30, \"timeEstimatedUnit\": \"MINUTES\"}," +
-                "\"projectId\": 1}";
+                "\"projectId\": 1," +
+                "\"assigneeIds\": [1]}";
 
         mockMvc.perform(
                         post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(json))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.ticketNo", notNullValue()));
+                .andExpect(jsonPath("$.ticketNo", notNullValue()))
+                .andExpect(jsonPath("$.assignees", hasSize(1)));
     }
 
     @Test
-    @Order(2)
+    @Order(3)
+    @WithMockUser
+    public void whenCreateTicketWithNonMemberAssignee_thenShouldReturnBadRequest() throws Exception {
+        String json = "{" +
+                "\"title\": \"Ticket 1\", " +
+                "\"description\": \"Ticket Description 1\"," +
+                "\"type\":\"BUG\"," +
+                "\"priority\":\"LOW\"," +
+                "\"status\":\"OPEN\"," +
+                "\"timeEstimated\": {\"timeEstimated\": 2, \"timeEstimatedUnit\": \"HOURS\"}," +
+                "\"projectId\": 1," +
+                "\"assigneeIds\": [3]}";
+
+        mockMvc.perform(
+                        post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(4)
     @WithMockUser
     public void whenUpdateTicket_thenShouldBeOk() throws Exception {
         String json = "{" +
@@ -82,17 +108,19 @@ public class TicketIntegrationTests {
                 "\"priority\":\"LOW\"," +
                 "\"status\":\"CLOSED\"," +
                 "\"timeEstimated\": {\"timeEstimated\": 2, \"timeEstimatedUnit\": \"HOURS\"}," +
-                "\"projectId\": 1}";
+                "\"projectId\": 1," +
+                "\"assigneeIds\": [1]}";
 
         mockMvc.perform(
                     put(baseUrl + "/" + 1)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(json))
-            .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.assignees", hasSize(1)));
     }
 
     @Test
-    @Order(3)
+    @Order(5)
     @WithMockUser
     public void whenGetTicketById_thenShouldBeOk() throws Exception {
         mockMvc.perform(get(baseUrl + "/" + 2))
@@ -100,7 +128,7 @@ public class TicketIntegrationTests {
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     @WithMockUser(username = "sean@gmail.com")
     public void whenGetAllTicketsWithAdminUser_thenShouldReturnAll() throws Exception {
         mockMvc.perform(
@@ -110,7 +138,7 @@ public class TicketIntegrationTests {
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     @WithMockUser(username = "prince@gmail.com")
     public void whenGetAllTicketsWithUser_thenShouldReturnAllAssignedToUser() throws Exception {
         mockMvc.perform(
@@ -120,42 +148,7 @@ public class TicketIntegrationTests {
     }
 
     @Test
-    @Order(6)
-    @WithMockUser
-    public void whenAddAssignee_thenShouldBeOk() throws Exception {
-        mockMvc.perform(
-                        put(String.format("%s/%d/assignees/add-assignee?assigneeId=%d",baseUrl, 1, 1)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.assignees", hasSize(1)));
-
-        mockMvc.perform(
-                        put(String.format("%s/%d/assignees/add-assignee?assigneeId=%d",baseUrl, 1, 3)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.assignees", hasSize(2)));
-    }
-
-    @Test
-    @Order(7)
-    @WithMockUser
-    public void whenAddAssigneeWhoseNotMemberToProject_thenShouldBeBadRequest() throws Exception {
-        mockMvc.perform(
-                        put(String.format("%s/%d/assignees/add-assignee?assigneeId=%d",baseUrl, 1, 2)))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-    }
-
-    @Test
     @Order(8)
-    @WithMockUser
-    public void whenRemoveAssignee_thenShouldBeOk() throws Exception {
-        mockMvc.perform(
-                        put(String.format("%s/%d/assignees/remove-assignee?assigneeId=%d",baseUrl, 1, 3)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.assignees", hasSize(1)));
-    }
-
-    @Test
-    @Order(9)
     @WithMockUser
     public void whenDelete_thenShouldBeNoContent() throws Exception {
         mockMvc.perform(

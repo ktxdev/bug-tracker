@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
         ticket.update(ticketDto);
-        ticket.setAssignees(assignees);
+        ticket.setAssignees(new HashSet<>(assignees));
         return ticketDao.save(ticket);
     }
 

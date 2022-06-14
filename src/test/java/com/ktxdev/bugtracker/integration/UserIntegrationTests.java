@@ -33,7 +33,7 @@ public class UserIntegrationTests {
 
     @Test
     @Order(1)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenCreateUser_thenReturnCreated() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -53,7 +53,7 @@ public class UserIntegrationTests {
 
     @Test
     @Order(2)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenCreateUserWithoutRole_thenReturnBadRequest() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
@@ -83,7 +83,7 @@ public class UserIntegrationTests {
 
 
         mockMvc.perform(
-                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
+                post(String.format("%s/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());
@@ -97,7 +97,7 @@ public class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
+                post(String.format("%s/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isCreated());
@@ -115,7 +115,7 @@ public class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
+                post(String.format("%s/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isBadRequest());
@@ -133,7 +133,7 @@ public class UserIntegrationTests {
                 "}";
 
         mockMvc.perform(
-                post(String.format("%s/opn/v1/users/sign-up", baseUrl))
+                post(String.format("%s/v1/users/sign-up", baseUrl))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isBadRequest());
@@ -145,13 +145,11 @@ public class UserIntegrationTests {
     public void whenUpdate_thenShouldBeOk() throws Exception {
         String json = "{" +
                 "\"firstName\":\"Sean\", " +
-                "\"lastName\":\"Huvaya\", " +
-                "\"password\":\"Password\", " +
-                "\"confirmPassword\":\"Password\" " +
+                "\"lastName\":\"Huvaya\" " +
                 "}";
 
         mockMvc.perform(
-                put(String.format("%s/v1/users/1", baseUrl) )
+                put(String.format("%s/v1/users/3", baseUrl) )
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
         ).andExpect(status().isOk());
@@ -159,34 +157,16 @@ public class UserIntegrationTests {
 
     @Test
     @Order(7)
-    @WithMockUser
-    public void whenUpdateWithNonMatchingPasswords_thenReturnBadRequest() throws Exception {
-        String json = "{" +
-                "\"firstName\":\"Sean\", " +
-                "\"lastName\":\"Huvaya\", " +
-                "\"password\":\"password\", " +
-                "\"confirmPassword\":\"Password\", " +
-                "}";
-
-        mockMvc.perform(
-                put(String.format("%s/v1/users/1", baseUrl))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(json)
-        ).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @Order(8)
-    @WithMockUser(username = "sean@gmail.com")
+    @WithMockUser(username = "admin@ktxdev.com")
     public void whenGetProfile_thenReturnOk() throws Exception {
 
         mockMvc.perform(
-                get(String.format("%s/v1/users/profile", baseUrl))
+                get(String.format("%s/v1/users/my-profile", baseUrl))
         ).andExpect(status().isOk());
     }
 
     @Test
-    @Order(9)
+    @Order(8)
     @WithMockUser
     public void whenGetAllUsers_thenReturnOk() throws Exception {
         mockMvc.perform(

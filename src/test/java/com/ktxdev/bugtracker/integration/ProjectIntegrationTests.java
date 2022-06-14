@@ -36,15 +36,17 @@ public class ProjectIntegrationTests {
 
     @Test
     @Order(1)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenCreateProject_thenShouldCreate() throws Exception {
-        String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\"}";
+        String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\", \"memberIds\": [1,2]}";
 
         mockMvc.perform(
                 post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
-        ).andExpect(status().isCreated());
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.members", hasSize(2)));
 
         json = "{\"name\":\"Project 2\", \"description\":\"Test project description\"}";
 
@@ -52,12 +54,14 @@ public class ProjectIntegrationTests {
                 post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
-        ).andExpect(status().isCreated());
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.members", hasSize(0)));
     }
 
     @Test
     @Order(2)
-    @WithMockUser(roles = "USER")
+    @WithMockUser(authorities = "USER")
     public void whenCreateProject_thenShouldBeForbidden() throws Exception {
         String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\"}";
 
@@ -65,12 +69,13 @@ public class ProjectIntegrationTests {
                 post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
-        ).andExpect(status().isForbidden());
+        )
+                .andExpect(status().isForbidden());
     }
 
     @Test
     @Order(3)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenCreateProjectWithExistingName_thenShouldReturnBadRequest() throws Exception {
         String json = "{\"name\":\"Project 1\", \"description\":\"Test project description\"}";
 
@@ -83,20 +88,22 @@ public class ProjectIntegrationTests {
 
     @Test
     @Order(4)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenUpdateProject_thenShouldReturnOk() throws Exception {
-        String json = "{\"name\":\"Project Test\", \"description\":\"Test project description\"}";
+        String json = "{\"name\":\"Project Test\", \"description\":\"Test project description\", \"memberIds\": [1]}";
 
         mockMvc.perform(
                 put(String.format("%s/%d", baseUrl, 1))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
-        ).andExpect(status().isOk());
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.members", hasSize(1)));
     }
 
     @Test
     @Order(5)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenUpdateProjectWithExistingName_thenShouldReturnBadRequest() throws Exception {
         String json = "{\"name\":\"Project Test\", \"description\":\"Test project description\"}";
 
@@ -133,43 +140,8 @@ public class ProjectIntegrationTests {
     }
 
     @Test
-    @Order(8)
-    @WithMockUser(roles = "ADMIN")
-    public void whenAddMember_thenShouldBeOk() throws Exception {
-        mockMvc.perform(put(String.format("%s/%d/members/add-member?memberId=%d", baseUrl, 1, 1)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.members", hasSize(1)));
-
-        mockMvc.perform(put(String.format("%s/%d/members/add-member?memberId=%d", baseUrl, 1, 2)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.members", hasSize(2)));
-
-        mockMvc.perform(put(String.format("%s/%d/members/add-member?memberId=%d", baseUrl, 1, 3)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.members", hasSize(3)));
-
-    }
-
-    @Test
-    @Order(9)
-    @WithMockUser(roles = "ADMIN")
-    public void whenAddAlreadyAddedMember_thenShouldBeBadRequest() throws Exception {
-        mockMvc.perform(put(String.format("%s/%d/members/add-member?memberId=%d", baseUrl, 1, 2)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @Order(10)
-    @WithMockUser(roles = "ADMIN")
-    public void whenRemoveMember_thenShouldBeOk() throws Exception {
-        mockMvc.perform(put(String.format("%s/%d/members/remove-member?memberId=%d", baseUrl, 1, 2)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.members", hasSize(2)));
-    }
-
-    @Test
     @Order(11)
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     public void whenDeleteProject_thenShouldBeNoContent() throws Exception {
         mockMvc.perform(delete(String.format("%s/%d", baseUrl, 2)))
                 .andExpect(status().isNoContent());
