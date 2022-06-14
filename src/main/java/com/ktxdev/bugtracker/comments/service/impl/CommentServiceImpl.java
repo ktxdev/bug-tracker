@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Collection<Comment> getCommentsByTicket(String ticketNo) {
         log.debug("### Retrieving comments for ticket: " + ticketNo);
-        return commentDao.findAllByTicket_TicketNo(ticketNo);
+        return commentDao.findAllByTicket_TicketNoOrderByCreatedAtDesc(ticketNo);
     }
 
     @Override
