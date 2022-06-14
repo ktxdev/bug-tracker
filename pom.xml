@@ -16,6 +16,7 @@
     <properties>
         <java.version>11</java.version>
         <swagger.version>3.0.0</swagger.version>
+        <testSuite>**/BugTrackerApplicationTestSuite.class</testSuite>
     </properties>
     <dependencies>
         <dependency>
@@ -89,6 +90,15 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>${testSuite}</include>
+                    </includes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
