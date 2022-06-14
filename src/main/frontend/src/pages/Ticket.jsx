@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getTicketById } from '../api/tickets-api';
 import { useAuth } from '../auth/auth';
+import Comments from '../components/Comments';
 import { useAlert } from '../utils/AlertContext';
 import { useSpinner } from '../utils/SpinnerContext';
 
@@ -47,11 +48,6 @@ const Ticket = () => {
 
     const { loading, showLoader, hideLoader } = useSpinner();
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        console.log('Submitting form...');
-    }
-    
     return (
         <>
             {
@@ -105,29 +101,8 @@ const Ticket = () => {
                                 <Typography >{ticket.type}</Typography>
                             </Box>
                         </Grid>
-                        <Grid item md={7}>
-                            <Typography color='textSecondary' sx={{ my: 1 }}>Comments (0) </Typography>
-                            <Divider sx={{ my: 1 }} />
-                            <form onSubmit={handleFormSubmit}>
-                                <FormControl sx={{ my: 1, width: '100%' }} variant="outlined" >
-                                    <InputLabel htmlFor="comment">Comment</InputLabel>
-                                    <OutlinedInput
-                                        id="comment"
-                                        placeholder='Enter comment'
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="add comment"
-                                                    edge="end"
-                                                >
-                                                    <Send />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        }
-                                        label="Password"
-                                    />
-                                </FormControl>
-                            </form>
+                        <Grid item xs={12} md={7}>
+                            <Comments ticket={ticket} />
                         </Grid>
                     </Grid>
                 </Box>
