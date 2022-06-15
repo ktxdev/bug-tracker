@@ -100,7 +100,6 @@ const Tickets = () => {
   }
 
   const onUpdateTicket = async() => {
-    console.log(ticket);
     const response = await updateTicket(ticket.id, ticket, accessToken)
 
     if (response.success) {

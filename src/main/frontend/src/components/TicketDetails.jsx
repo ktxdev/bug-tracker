@@ -131,7 +131,7 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
                                     label="Estimated Time"
                                     name="timeEstimated"
                                     type='number'
-                                    value={ticket.timeEstimated.timeEstimated}
+                                    value={ticket?.timeEstimated?.timeEstimated || ''}
                                     onChange={handleInputChange}
                                     sx={{ width: '100%', mt: 2 }}
                                     inputProps={{ min: 0 }}
@@ -144,7 +144,7 @@ const TicketDetails = ({ ticketModalOpen, toggleTicketModal, ticket, setTicket, 
                                         id='time-unit'
                                         label='Estimated Time Unit'
                                         name='timeEstimatedUnit'
-                                        value={ticket.timeEstimated.timeEstimatedUnit}
+                                        value={ticket?.timeEstimated?.timeEstimatedUnit || ''}
                                         onChange={handleInputChange}
                                     >
                                         <MenuItem value='MINUTES'>Minutes</MenuItem>

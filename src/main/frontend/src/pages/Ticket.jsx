@@ -2,9 +2,10 @@ import { NoteAlt, Send } from '@mui/icons-material';
 import { Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getTicketById } from '../api/tickets-api';
+import { getTicketById, updateTicket } from '../api/tickets-api';
 import { useAuth } from '../auth/auth';
 import Comments from '../components/Comments';
+import TicketDetails from '../components/TicketDetails';
 import { useAlert } from '../utils/AlertContext';
 import { useSpinner } from '../utils/SpinnerContext';
 
@@ -31,6 +32,7 @@ const Ticket = () => {
     useEffect(() => {
         showLoader();
         fetchTicketById();
+        setTicket({...ticket, projectId: ticket?.project?.id})
         hideLoader();
     }, [])
 
@@ -48,8 +50,38 @@ const Ticket = () => {
 
     const { loading, showLoader, hideLoader } = useSpinner();
 
+
+    const [showTicketDetailsModal, setShowTicketDetailsModal] = useState(false);
+    const toggleTicketModal = () => setShowTicketDetailsModal(!showTicketDetailsModal);
+
+    const onUpdateTicket = async () => {
+        console.log(ticket);
+        const response = await updateTicket(ticket.id, ticket, accessToken)
+
+        if (response.success) {
+            setFeedback({
+                open: true,
+                severity: 'success',
+                title: 'Ticket successfully updated!'
+            })
+
+            toggleTicketModal();
+            setIsEdit(false)
+        } else {
+            setFeedback({ open: true, severity: 'error', title: response.data.message })
+        }
+    }
+
     return (
         <>
+            <TicketDetails
+                ticketModalOpen={showTicketDetailsModal}
+                toggleTicketModal={toggleTicketModal}
+                ticket={ticket}
+                setTicket={setTicket}
+                onSave={onUpdateTicket}
+            />
+
             {
                 !loading && <Box sx={{ mx: 4, my: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -64,7 +96,7 @@ const Ticket = () => {
                             size='small'
                             variant='contained'
                             sx={{ mb: 1, textTransform: 'none' }}
-                        // onClick={toggleTicketModal}
+                            onClick={toggleTicketModal}
                         >
                             <NoteAlt />
                             Edit Ticket
