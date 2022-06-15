@@ -15,18 +15,6 @@ const Ticket = () => {
 
     const { auth: { accessToken } } = useAuth();
 
-    // const initTicket = {
-    //     title: '',
-    //     projectId: 0,
-    //     description: '',
-    //     timeEstimated: {
-    //         timeEstimated: 0,
-    //         timeEstimatedUnit: 'MINUTES'
-    //     },
-    //     type: 'BUG',
-    //     status: 'OPEN',
-    //     priority: 'LOW'
-    // }
     const [ticket, setTicket] = useState({})
 
     useEffect(() => {
