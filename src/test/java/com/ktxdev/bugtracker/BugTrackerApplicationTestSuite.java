@@ -10,7 +10,8 @@ import org.junit.platform.suite.api.Suite;
         AuthenticationIntegrationTests.class,
         ProjectIntegrationTests.class,
         TicketIntegrationTests.class,
-        CommentIntegrationTests.class
+        CommentIntegrationTests.class,
+        DashboardIntegrationTests.class
 })
 class BugTrackerApplicationTestSuite {
 }

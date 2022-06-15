@@ -26,7 +26,7 @@ public class TicketRestController {
     private final TicketService ticketService;
 
     @PostMapping
-    @ApiOperation("Create ticke")
+    @ApiOperation("Create ticket")
     public ResponseEntity<Ticket> createTicket(
             @RequestBody TicketDto ticketDto,
             HttpServletRequest request
