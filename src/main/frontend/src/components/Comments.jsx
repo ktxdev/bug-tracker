@@ -1,9 +1,10 @@
 import { Send } from '@mui/icons-material'
 import { Box, Divider, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import { createComment } from '../api/comments-api';
+import React, { useEffect, useState } from 'react'
+import { createComment, deleteComment, getAllComments } from '../api/comments-api';
 import { useAuth } from '../auth/auth';
 import { useAlert } from '../utils/AlertContext';
+import Comment from './Comment';
 
 const Comments = ({ ticket }) => {
 
@@ -14,6 +15,47 @@ const Comments = ({ ticket }) => {
     const { auth: { accessToken, profile } } = useAuth();
 
     const { setFeedback } = useAlert();
+
+    useEffect(() => {
+        fetchComments();
+    }, [ticket])
+
+    const fetchComments = async () => {
+        
+        if(!ticket.ticketNo) return;
+
+        const response = await getAllComments(ticket.ticketNo, accessToken);
+        
+        if(response.success) {
+            setComments(response.data);
+        } else {
+            setFeedback({
+                open: true,
+                severity: 'error',
+                title: 'Failed to get comments. Please refresh page.'
+            })
+        }
+    }
+
+    const onDelete = async (id) => {
+        const response = await deleteComment(id, accessToken);
+        if(response.success) {
+            setComments(response.data);
+            const updatedComments = comments.filter(comment => comment.id !== id);
+            setComments(updatedComments);
+            setFeedback({
+                open: true,
+                severity: 'success',
+                title: 'Comment successfully deleted!'
+            })
+        } else {
+            setFeedback({
+                open: true,
+                severity: 'error',
+                title: response.data.message
+            })
+        }
+    }
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
@@ -73,6 +115,9 @@ const Comments = ({ ticket }) => {
                     />
                 </FormControl>
             </form>
+            {
+                comments.map(comment => <Comment key={comment.id} comment={comment} onDelete={onDelete}/>)
+            }
         </Box>
     )
 }
