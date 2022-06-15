@@ -39,3 +39,7 @@ export const changePassword = async(request, accessToken) => {
     const headers = { [AUTHORIZATION_HEADER]: `${TOKEN_PREFIX} ${accessToken}` }
     return await put('/v1/users/change-password', request, headers);
 }
+
+export const signUp = async(request) => {
+    return await post(`${BASE_URL}/sign-up`, request);
+}

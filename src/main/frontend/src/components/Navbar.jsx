@@ -85,7 +85,7 @@ const Navbar = ({ open, toggleDrawer }) => {
           Bug Tracker
         </Typography>
         <IconButton aria-describedby={id} onClick={handleClick} color="inherit">
-          <Typography sx={{ mx: 1 }} >{`${profile.firstName} ${profile.lastName}`}</Typography>
+          <Typography sx={{ mx: 1 }} >{`${profile?.firstName} ${profile?.lastName}`}</Typography>
           <Avatar />
         </IconButton>
         <Popover
