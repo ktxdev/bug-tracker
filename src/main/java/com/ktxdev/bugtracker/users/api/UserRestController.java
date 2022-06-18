@@ -5,8 +5,8 @@ import com.ktxdev.bugtracker.users.dto.UserPasswordUpdateDto;
 import com.ktxdev.bugtracker.users.dto.UserUpdateDto;
 import com.ktxdev.bugtracker.users.model.User;
 import com.ktxdev.bugtracker.users.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import java.security.Principal;
 import java.util.Collection;
 
 @RestController
-@Api(tags = "Users")
+@Tag(name = "Users")
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 @Slf4j(topic = "User Rest Controller")
@@ -32,7 +32,7 @@ public class UserRestController {
     private final UserService userService;
 
     @PostMapping
-    @ApiOperation("Create user")
+    @Operation(summary = "Create user")
     @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<User> create(
             @RequestBody UserDto userDto,
@@ -46,7 +46,7 @@ public class UserRestController {
     }
 
     @PostMapping("sign-up")
-    @ApiOperation("User sign up")
+    @Operation(summary = "User sign up")
     public ResponseEntity<User> register(
             @RequestBody UserDto userDto,
             HttpServletRequest request
@@ -59,7 +59,7 @@ public class UserRestController {
     }
 
     @PutMapping("{userId}")
-    @ApiOperation("Update user")
+    @Operation(summary = "Update user")
     public ResponseEntity<User> update(
             @RequestBody UserUpdateDto userDto,
             @PathVariable long userId
@@ -69,7 +69,7 @@ public class UserRestController {
     }
 
     @PutMapping("change-password")
-    @ApiOperation("Change user password")
+    @Operation(summary = "Change user password")
     public ResponseEntity<User> updatePassword(
             @RequestBody UserPasswordUpdateDto updateDto,
             Principal principal
@@ -79,7 +79,7 @@ public class UserRestController {
     }
 
     @GetMapping("my-profile")
-    @ApiOperation("Get logged in user profile")
+    @Operation(summary = "Get logged in user profile")
     public ResponseEntity<User> profile(
             Principal principal
     ) {
@@ -87,7 +87,7 @@ public class UserRestController {
     }
 
     @GetMapping
-    @ApiOperation("Get paged users")
+    @Operation(summary = "Get paged users")
     public ResponseEntity<Page<User>> getPagedUsers(
             @PageableDefault(sort = "lastName") Pageable pageable,
             @RequestParam(required = false) String q
@@ -96,7 +96,7 @@ public class UserRestController {
     }
 
     @GetMapping("all")
-    @ApiOperation("Get all users")
+    @Operation(summary = "Get all users")
     public ResponseEntity<Collection<User>> getAllUsers(
             @RequestParam(required = false) String q
     ) {
@@ -104,7 +104,7 @@ public class UserRestController {
     }
 
     @DeleteMapping("{userId}")
-    @ApiOperation("Delete user by id")
+    @Operation(summary = "Delete user by id")
     public ResponseEntity<?> deleteUser(
             @PathVariable long userId
     ) {

@@ -3,13 +3,9 @@ package com.ktxdev.bugtracker.comments.api;
 import com.ktxdev.bugtracker.comments.dto.CommentDto;
 import com.ktxdev.bugtracker.comments.model.Comment;
 import com.ktxdev.bugtracker.comments.service.CommentService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,14 +16,14 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "Comments")
+@Tag(name = "Comments")
 @RequestMapping("api/v1/comments")
 public class CommentRestController {
 
     private final CommentService commentService;
 
     @PostMapping
-    @ApiOperation("Create comment")
+    @Operation(summary = "Create comment")
     public ResponseEntity<Comment> createComment(
             @RequestBody CommentDto commentDto,
             HttpServletRequest request
@@ -41,7 +37,7 @@ public class CommentRestController {
     }
 
     @PutMapping("{commentId}")
-    @ApiOperation("Update comment")
+    @Operation(summary = "Update comment")
     public ResponseEntity<Comment> updateProject(
             @RequestBody CommentDto commentDto,
             @PathVariable long commentId
@@ -51,7 +47,7 @@ public class CommentRestController {
     }
 
     @GetMapping("{commentId}")
-    @ApiOperation("Get comment by Id")
+    @Operation(summary = "Get comment by Id")
     public ResponseEntity<Comment> getCommentById(
             @PathVariable long commentId
     ) {
@@ -59,7 +55,7 @@ public class CommentRestController {
     }
 
     @GetMapping
-    @ApiOperation("Get comments by ticket number")
+    @Operation(summary = "Get comments by ticket number")
     public ResponseEntity<Collection<Comment>> getCommentsByTicket(
             @RequestParam String ticketNo
     ) {
@@ -67,7 +63,7 @@ public class CommentRestController {
     }
 
     @DeleteMapping("{commentId}")
-    @ApiOperation("Delete comment")
+    @Operation(summary = "Delete comment")
     public ResponseEntity<?> deleteComment(
             @PathVariable long commentId
     ) {

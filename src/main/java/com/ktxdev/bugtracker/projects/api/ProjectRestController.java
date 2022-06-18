@@ -1,10 +1,10 @@
 package com.ktxdev.bugtracker.projects.api;
 
-import com.ktxdev.bugtracker.projects.model.Project;
 import com.ktxdev.bugtracker.projects.dto.ProjectDto;
+import com.ktxdev.bugtracker.projects.model.Project;
 import com.ktxdev.bugtracker.projects.service.ProjectService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +20,14 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "Projects")
+@Tag(name = "Projects")
 @RequestMapping("api/v1/projects")
 public class ProjectRestController {
 
     private final ProjectService projectService;
 
     @PostMapping
-    @ApiOperation("Create project")
+    @Operation(summary = "Create project")
     @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> createProject(
             @RequestBody ProjectDto projectDto,
@@ -42,7 +42,7 @@ public class ProjectRestController {
     }
 
     @PutMapping("{projectId}")
-    @ApiOperation("Update project")
+    @Operation(summary = "Update project")
     @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<Project> updateProject(
             @RequestBody ProjectDto projectDto,
@@ -53,7 +53,7 @@ public class ProjectRestController {
     }
 
     @GetMapping("{projectId}")
-    @ApiOperation("Get project by id")
+    @Operation(summary = "Get project by id")
     public ResponseEntity<Project> getProject(
             @PathVariable long projectId
     ) {
@@ -61,7 +61,7 @@ public class ProjectRestController {
     }
 
     @GetMapping
-    @ApiOperation("Get all projects (Paged)")
+    @Operation(summary = "Get all projects (Paged)")
     public ResponseEntity<Page<Project>> getAllProjectsPaged(
             @PageableDefault Pageable pageable
     ) {
@@ -69,13 +69,13 @@ public class ProjectRestController {
     }
 
     @GetMapping("all")
-    @ApiOperation("Get all projects")
+    @Operation(summary = "Get all projects")
     public ResponseEntity<Collection<Project>> getAllProjects() {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
 
     @DeleteMapping("{projectId}")
-    @ApiOperation("Delete project")
+    @Operation(summary = "Delete project")
     @PreAuthorize("hasAnyAuthority(T(com.ktxdev.bugtracker.users.model.UserRole).ADMIN)")
     public ResponseEntity<?> deleteProject(
             @PathVariable long projectId
