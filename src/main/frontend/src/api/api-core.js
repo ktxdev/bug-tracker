@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: 'http://api.bug-tracker.ktxdev.com:9803/api/',
+    baseURL: 'http://localhost:8080/api/',
     headers: {
         'content-type': 'application/json'
     }
