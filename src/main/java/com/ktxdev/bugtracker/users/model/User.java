@@ -13,6 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @Entity
 @Builder
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
